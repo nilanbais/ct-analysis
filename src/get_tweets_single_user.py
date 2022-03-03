@@ -5,7 +5,6 @@ extract_followers.py script.
 
 [x] - get tweets using api endpoint
 [x] - get the time of tweet with the tweet itself
-[] - be able the specify a time range for the tweets to recieve.
 [] - be able to save or return tweets as collections (dtype: still unknkown) strings (as-is) of a single user.
 [] - be able to import the script or functions in other scripts.
 
