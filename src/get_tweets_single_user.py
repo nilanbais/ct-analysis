@@ -33,7 +33,7 @@ def bearer_oauth(r):
 
 def create_url():
     __USER_ID = __config["USER_ID"]
-    url = "https://api.twitter.com/2/users/{}/{}".format(user_id, 'tweets')
+    url = "https://api.twitter.com/2/users/{}/{}?{}".format(user_id, 'tweets', 'exclude')
     return url
 
 def connect_to_endpoint(url, params):
