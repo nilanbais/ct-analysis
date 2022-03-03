@@ -1,10 +1,10 @@
 """
-This script is for the extraction of the tweets of one user for a given time range. this script has to
+This script is for the extraction of the tweets of one user for a given time range. This script has to
 be executed multiple times to extract the tweets of the whole list of users, obtained by executing the 
 extract_followers.py script.
 
 [x] - get tweets using api endpoint
-[] - get replies, retweets and the time of tweet with the tweet itself
+[x] - get the time of tweet with the tweet itself
 [] - be able to save or return tweets as collections (dtype: still unknkown) strings (as-is) of a single user.
 [] - be able to import the script or functions in other scripts.
 
@@ -18,7 +18,7 @@ __BEARER_TOKEN = __config["BEARER_TOKEN"]
 __USERNAME = __config["USERNAME"]
 
 # Input variables
-user_id = "899558268795842561"  # first from ct_accounts.json
+user_id = "969716112752553985"  # first from ct_accounts.json
 time_range = ""  # the time range of 24 hours
 
 # Functions
@@ -28,13 +28,23 @@ def bearer_oauth(r):
     """
 
     r.headers["Authorization"] = f"Bearer {__BEARER_TOKEN}"
-    r.headers["User-Agent"] = "v2FollowingLookupPython"  # all endpoints have different user-agents.
+    r.headers["User-Agent"] = "v2UserTweetsPython"  # all endpoints have different user-agents.
     return r
 
 def create_url():
     __USER_ID = __config["USER_ID"]
-    url = "https://api.twitter.com/2/users/{}/{}?{}".format(user_id, 'tweets', 'exclude')
+    url = "https://api.twitter.com/2/users/{}/{}".format(user_id, 'tweets')
     return url
+
+def get_params():
+    # Tweet fields are adjustable.
+    # Options include:
+    # attachments, author_id, context_annotations,
+    # conversation_id, created_at, entities, geo, id,
+    # in_reply_to_user_id, lang, non_public_metrics, organic_metrics,
+    # possibly_sensitive, promoted_metrics, public_metrics, referenced_tweets,
+    # source, text, and withheld
+    return {'tweet.fields': 'created_at'}
 
 def connect_to_endpoint(url, params):
     response = requests.request("GET", url, auth=bearer_oauth, params=params)
@@ -49,7 +59,7 @@ def connect_to_endpoint(url, params):
 
 def main():
     url = create_url()
-    params = {}
+    params = get_params()
     json_response = connect_to_endpoint(url, params)
     print(json_response)
 
