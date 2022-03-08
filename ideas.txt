@@ -5,3 +5,6 @@ newest and oldest tweet_id. Using these ids to extract find the created_at data 
 gives the time range between these tweets.
 
 [] - be able the specify a time range for the tweets to recieve.
+
+Transforming the text of the tweets to unicode to keep the opportunity of trying to use emojis in a sentiment
+analysis
