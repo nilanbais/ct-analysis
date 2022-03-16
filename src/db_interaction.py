@@ -11,8 +11,12 @@ by just giving it the piece of data that needs to be updated.
 [] - write a class that is resposible for the transformation of the data in the database AND uses the class for the db connection.
 [] - use as many input variables as possible for the methods in the class. 
 """
+import dotenv
 
+# env variables
+__config = dotenv.dotenv_values('./res/.env')
 
+# Classes
 class DataBaseConnection():
     """
     Class responsible for handling all the database connection actions.
