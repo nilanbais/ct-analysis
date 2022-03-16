@@ -4,6 +4,7 @@ looking up users using username = v2UserLookupPython
 looking up following by user id = v2FollowingLookupPython
 
 [x] - saving the followed accounts to the data folder.
+[] - store the tweets of the different users in a database (prob mongodb)
 """
 import json
 import dotenv
