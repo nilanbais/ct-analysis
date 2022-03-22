@@ -5,6 +5,9 @@ some parameters to connect to the db. Also assume that the structure of the data
 some functions that isolate/extract some specific pieces of data. And write funcitonality that updates the data structure automaticly
 by just giving it the piece of data that needs to be updated.
 
+[x] - install PyMongo package (source: https://pymongo.readthedocs.io/en/stable/)
+[] - use PyMongo as python mongodb client 
+
 [] - write a class responisble for the connection with the database.
 [] - (optional) write functionality that tests the connection before each action.
 
@@ -12,6 +15,7 @@ by just giving it the piece of data that needs to be updated.
 [] - use as many input variables as possible for the methods in the class. 
 """
 import dotenv
+import pymongo
 
 # env variables
 __config = dotenv.dotenv_values('./res/.env')
