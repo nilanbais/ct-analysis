@@ -2,3 +2,5 @@ requests
 dotenv
 json
 pymongo
+textblob
+textblob.download_corpora
