@@ -12,6 +12,11 @@ sentiment score as an extra column.
 import textblob
 
 def get_text_sentiment(input_text: str):
+    """
+    Function returns a sentiment object with the following scores.
+    - polarity score -> how possitive or negative a text is.
+    - subjectivity score -> how factual a text is. (or how much of an opinion)
+    """
     # Creating a text object
     text_object = textblob.TextBlob(text=input_text)
     # Assigning the sentiment attribute to it's own variable + returning variable
