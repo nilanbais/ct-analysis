@@ -8,8 +8,7 @@ extract_followers.py script.
 [x] - be able to return tweets as collections (dtype: list of dicts) strings (as-is) of a single user.
 [x] - be able to extract all the tweet within a given/specified time range of one user and combining the 
      multiple response packages to one single package.
-[] - be able to import the script or functions in other scripts.
-
+[] - store the tweets of the different users in a database (prob mongodb)
 """
 import requests
 import dotenv

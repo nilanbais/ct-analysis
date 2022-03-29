@@ -4,6 +4,7 @@ looking up users using username = v2UserLookupPython
 looking up following by user id = v2FollowingLookupPython
 
 [x] - saving the followed accounts to the data folder.
+[] - store the tweets of the different users in a database (prob mongodb)
 """
 import json
 import dotenv
@@ -44,11 +45,15 @@ def store_response(json_data):
     with open('./data/ct_accounts.json', 'w') as json_file:
         json.dump(json_data, json_file)
 
-def main():
+def extract_follers_list():
     url = create_url()
     params = {}
     json_response = connect_to_endpoint(url, params)
-    store_response(json_data=json_response)
+    return json_response
+
+def main():
+    data = extract_follers_list()
+    store_response(json_data=data)
 
 
 if __name__ == '__main__':
