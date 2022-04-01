@@ -17,15 +17,21 @@ by just giving it the piece of data that needs to be updated.
 import dotenv
 import pymongo
 
-# env variables
-__config = dotenv.dotenv_values('./res/.env')
-
 # Classes
 class DataBaseConnection():
     """
     Class responsible for handling all the database connection actions.
     """
-    pass
+    def __init__(self) -> None:
+        # env variables
+        self.__config = dotenv.dotenv_values('./res/.env')  
+
+    def init_client(self):
+        client = pymongo.MongoClient("mongodb+srv://m001-student:{0}@sandbox.5yy1m.mongodb.net/{1}?retryWrites=true&w=majority".format(self.__config['DB_PASSWORD'],self.__config['DB_NAME']))
+        db = client.sample_training
+        companies_collection = db.get_collection('companies')
+        print(companies_collection.find_one())
+
 
 class DataBaseActions(DataBaseConnection):
     """
@@ -33,3 +39,10 @@ class DataBaseActions(DataBaseConnection):
     THIS CLASS NEEDS TO INHERET THE CONNECTION CLASS FUNCTIONALITY (WHY? DON'T REALLY KNOW BUT TRY TO UNDERSTAND INHERETANCE)
     """
     pass
+
+def main():
+    dbc = DataBaseConnection()
+    dbc.init_client()
+
+if __name__ == '__main__':
+    main()
