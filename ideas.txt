@@ -4,7 +4,10 @@ elsewhere. The result of the request in get_tweets_single_user.py gives a piece 
 newest and oldest tweet_id. Using these ids to extract find the created_at data of the newest and oldest tweet
 gives the time range between these tweets.
 
-[] - be able the specify a time range for the tweets to recieve.
+[] - Be able the specify a time range for the tweets to recieve.
+[] - Change the twitter API communication to a class.
+[] - Build a base class containing the methodes for making the requests to the APIs and
+        let the specific API classes inherrit from the base class.
 
 Transforming the text of the tweets to unicode to keep the opportunity of trying to use emojis in a sentiment
 analysis
