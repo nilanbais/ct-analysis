@@ -11,3 +11,7 @@ gives the time range between these tweets.
 
 Transforming the text of the tweets to unicode to keep the opportunity of trying to use emojis in a sentiment
 analysis
+
+!! In the notes it is specified to be stored in the database, initialy resoning it will make the queries easier
+but this feels a bit to much like overkill, so it is decided that this needs to be fixed in the querying process
+instead of storing reduntant infomation in the database.
