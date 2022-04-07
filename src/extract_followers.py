@@ -15,7 +15,7 @@ __config = dotenv.dotenv_values('./res/.env')
 __BEARER_TOKEN = __config["BEARER_TOKEN"]
 __USERNAME = __config["USERNAME"]
 
-# Functions
+# Functions 
 def bearer_oauth(r):
     """
     Method required by bearer token authentication.
