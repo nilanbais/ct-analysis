@@ -21,7 +21,7 @@ __config = dotenv.dotenv_values('./res/.env')
 __BEARER_TOKEN = __config["BEARER_TOKEN"]
 __USERNAME = __config["USERNAME"]
 
-__TWITTER_API_TIME_FORMAT = "%Y-%m-%dT%H:%M:%S.000Z"
+__TWITTER_API_TIME_FORMAT = __config['TWITTER_API_TIME_FORMAT']
 
 # Input variables
 user_id = "969716112752553985"  # first from ct_accounts.json
