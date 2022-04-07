@@ -3,6 +3,7 @@ Class used for the functionaly of authentication of the api's used.
 The urls of the requests differ from eachother when making different api
 calls, so the definition of these urls have to be done in the classes
 dedicated to one signle api.
+This class should only be used as a parent class.
 """
 import dotenv
 import requests
@@ -40,25 +41,10 @@ class ApiAuthentication:
             )
         return response.json()
 
-class TwitterAPI(ApiAuthentication):
-    def __init__(self) -> None:
-        super().__init__('TWITTER_BEARER_TOKEN')
-        self.__config = dotenv.dotenv_values('./res/.env')
-    
-    def create_header(self) -> dict:
-        self.header = {"User-Agent": "v2FollowingLookupPython"}
-
-    def create_url(self) -> str:
-        __USER_ID = self.__config["USER_ID"]
-        self.url = "https://api.twitter.com/2/users/{}/following?{}={}".format(__USER_ID, "max_results", 1000)
-        return self.url
-
 
 def main():
-    api = TwitterAPI()
-    url = api.create_url()
-    api.create_header()
-    api.connect_to_endpoint(url, api.header)
+    api = ApiAuthentication()
+    api.connect_to_endpoint(api.url, api.header)
     print(api.header)
     
 
