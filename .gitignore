@@ -1,4 +1,6 @@
 .env
+bearer_tokens.env
 ct_accounts.json
 tweets_user_969716112752553985.json
 ideas.txt
+__pycache__
