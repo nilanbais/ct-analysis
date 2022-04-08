@@ -11,7 +11,7 @@ import requests
 class ApiAuthentication:
 
     def __init__(self, bearer_token_name) -> None:
-        self.__config = dotenv.dotenv_values('./res/.env')
+        self.__config = dotenv.dotenv_values('./res/bearer_tokens.env')
         self.bearer_token_name = bearer_token_name  # has to be set by the child class as input variable
         self.header = None  # set by create_header
         self.url = None  # set by create_url
