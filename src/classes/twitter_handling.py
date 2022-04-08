@@ -19,3 +19,13 @@ class TwitterAPI(ApiAuthentication):
         __USER_ID = self.__config["USER_ID"]
         self.url = "https://api.twitter.com/2/users/{}/following?{}={}".format(__USER_ID, "max_results", 1000)
         return self.url
+
+def main():
+    api = TwitterAPI()
+    api.create_header()
+    api.create_url()
+    api.connect_to_endpoint(api.url, api.header)
+    print(api.header)
+
+if __name__ == '__main__':
+    main()
