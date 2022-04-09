@@ -15,6 +15,7 @@ class ApiAuthentication:
         self.bearer_token_name = bearer_token_name  # has to be set by the child class as input variable
         self.header = None  # set by create_header
         self.url = None  # set by create_url
+        self.parameters = None  # set by create_parameters
     
     def _bearer_oauth(self, header) -> dict:
         header_oath = header.copy()  # Copy to make sure the token isn't added to the header attribute
@@ -24,11 +25,15 @@ class ApiAuthentication:
     def connect_to_endpoint(self, url, header, params: dict = {}) -> dict:
         if self.header is None:
             raise Exception(
-                "No header is created."
+                "No header created."
             )
         elif self.url is None:
             raise Exception(
-                "No url is created."
+                "No url created."
+            )
+        elif self.parameters is None:
+            raise Exception(
+                "No parameter object created."
             )
 
         response = requests.request("GET", url, headers=self._bearer_oauth(header), params=params)
