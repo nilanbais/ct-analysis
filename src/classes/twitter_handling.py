@@ -12,13 +12,22 @@ class TwitterAPI(ApiAuthentication):
         super().__init__('TWITTER_BEARER_TOKEN')
         self.__config = dotenv.dotenv_values('./res/.env')
     
-    def create_header(self) -> dict: 
+    def create_header(self) -> None: 
         self.header = {"User-Agent": "v2FollowingLookupPython"}
 
     def create_url(self) -> str:
         __USER_ID = self.__config["USER_ID"]
         self.url = "https://api.twitter.com/2/users/{}/following?{}={}".format(__USER_ID, "max_results", 1000)
         return self.url
+    
+    def create_parameters(self, parameter_dict: dict) -> None:
+        """
+        MIND YOUR STEP
+
+        de methofd is belangrijk in de recursieve method get_tweets (komt nog). Bouw deze 
+        gelijk goed in. 
+        """
+        self.parameters = parameter_dict.copy()
 
 def main():
     api = TwitterAPI()
