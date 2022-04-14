@@ -39,15 +39,15 @@ class TwitterAPI(ApiAuthentication):
         """
         self.parameters = parameter_dict.copy()
     
-    def create_url_v1(self) -> str:
-        """
-        MIND YOUR STEP
+    # def create_url_v1(self) -> str:
+    #     """
+    #     MIND YOUR STEP
 
-        extract_followers_url = "https://api.twitter.com/2/users/{}/following?{}={}".format(__USER_ID, "max_results", 1000)
-        get_tweets_single_users_url = "https://api.twitter.com/2/users/{}/{}?{}={}".format(user_id, 'tweets', 'max_results', 10)
-        """
-        __USER_ID = self.__config["USER_ID"]
-        self.url = "https://api.twitter.com/2/users/{}/following?{}={}".format(__USER_ID, "max_results", 1000)
+    #     extract_followers_url = "https://api.twitter.com/2/users/{}/following?{}={}".format(__USER_ID, "max_results", 1000)
+    #     get_tweets_single_users_url = "https://api.twitter.com/2/users/{}/{}?{}={}".format(user_id, 'tweets', 'max_results', 10)
+    #     """
+    #     __USER_ID = self.__config["USER_ID"]
+    #     self.url = "https://api.twitter.com/2/users/{}/following?{}={}".format(__USER_ID, "max_results", 1000)
         
     def create_url(self, mode: str = 'auto') -> None:
         """
