@@ -30,6 +30,7 @@ most_recent_time = '2021-10-22T10:30:01.000Z'  # HAS TO BE format like YYYY-MM-D
 # Functions
 def bearer_oauth(r):
     """
+    Overgezet naar ApiAuthentication
     Method required by bearer token authentication.
     """
 
@@ -38,10 +39,20 @@ def bearer_oauth(r):
     return r
 
 def create_url(user_id: str):
+    """
+    Overgezet naar TwitterAPI
+    """
     url = "https://api.twitter.com/2/users/{}/{}?{}={}".format(user_id, 'tweets', 'max_results', 10)
     return url
 
 def get_params(end_time: str) -> dict:
+    """
+    Overgezet naar TwitterAPI
+    
+    MIND YOUR STEP
+    Let op het commentaar dat hier bij de functie nog is toegevoegd. Neem dit mee in eventuele documnentatie.
+    
+    """
     # Tweet fields are adjustable.
     # Options include:
     # attachments, author_id, context_annotations,
@@ -52,6 +63,9 @@ def get_params(end_time: str) -> dict:
     return {'end_time': end_time, 'tweet.fields': 'created_at'}
 
 def connect_to_endpoint(url, params):
+    """
+    Overgezet naar ApiAuthentication
+    """
     response = requests.request("GET", url, auth=bearer_oauth, params=params)
     print(response.status_code)
     if response.status_code != 200:
@@ -64,6 +78,8 @@ def connect_to_endpoint(url, params):
 
 def transform_response(original_response: dict, user_id: str) -> dict:
     """
+    Overgezet naar TwitterApi
+
     Function to transform the original response data so it's a combination of the following datapoints.
     - user_id
     - tweet_id
@@ -91,6 +107,9 @@ def transform_response(original_response: dict, user_id: str) -> dict:
     return {'data': transformed_data, 'meta': _og_meta}
 
 def store_response(json_data: dict):
+    """
+    Overgezet naar TwitterApi
+    """
     with open('./data/tweets_user_{}.json'.format(user_id), 'w') as json_file:
         json.dump(json_data, json_file)
 
@@ -109,6 +128,8 @@ def get_stop_search_time(start_time: Union[str, datetime], time_range: str = 'da
 
 def isolate_time_oldest_object(oldest_id: str, response_data: list) -> Union[datetime, bool]:
     """
+    Overgezet naar TwitterApi
+
     Isolates the object with the given id from the given response data.
     """
     for item in response_data[::-1]:
@@ -120,6 +141,8 @@ def isolate_time_oldest_object(oldest_id: str, response_data: list) -> Union[dat
 
 def get_tweets(user_id: str, start_search_time: Union[str, datetime] = None, stop_search_time: Union[str, datetime] = None):
     """
+    Overgezet naar TwitterApi
+
     The function extracts the tweets of a given/specified user, within the given time range.
     """
     print('running get_tweets()')
@@ -159,6 +182,8 @@ def get_tweets(user_id: str, start_search_time: Union[str, datetime] = None, sto
 
 def get_RFC_timestamp(dt_object: datetime):
     """
+    Overgezet naar TwitterApi
+
     returns a string that is a valid RFC3339 date and time notation
     """
     __stamp_format = "%Y-%m-%dT%H:%M:%S.000Z"
