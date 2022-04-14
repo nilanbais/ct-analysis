@@ -58,17 +58,26 @@ class TwitterAPI(ApiAuthentication):
             'user tweets' -> creates url to extract tweets from a given user (not base_user).
 
         MIND THAT YOU HAVE TO CREATE THE HEADER BEFORE THE URL WHEN USING AUTO MODE
+
+        When you want to be able to use this method more freely, change the completion of the url_base to **kwargs
+        will be handled correctly and are added to the parmeters_dict.
+        Ever query parameter will be seperated using '&'. name=values to include&name2=value to include2&etc
         """
+        # Extracting base URL using header data
         if mode == 'auto':
-            self.url = [url for user_agent, url in self.API_URL_MAP.items() if user_agent == self.header["User-Agent"]][0]
+            url_base = next((url for user_agent, url in self.API_URL_MAP.items() if user_agent == self.header["User-Agent"]))
         elif mode == 'following':
-            pass
+            url_base = next((url for user_agent, url in self.API_URL_MAP.items() if user_agent == "v2FollowingLookupPython"))
         elif mode == 'user tweets':
-            pass
+            url_base = next((url for user_agent, url in self.API_URL_MAP.items() if user_agent == "v2UserTweetsPython"))
         else:
             raise Exception(
                 "The mode you selected werkt niet neef. Please see documentation for the available modes."
             )
+
+        # Completing the base URL using the parameter data
+        print(url_base)
+        
 
     """
     Methods to manage reading and writing the data
@@ -96,6 +105,7 @@ class TwitterAPI(ApiAuthentication):
     """
     Methods to get a response from the API
     """
+    # todo: functie ombouwen tot gebruik self
     def extract_follers_list(self):
         self.create_header(header_dict={"User-Agent": "v2FollowingLookupPython"})
         url = self.create_url()
@@ -103,7 +113,7 @@ class TwitterAPI(ApiAuthentication):
         json_response = self.connect_to_endpoint(url, params)
         return json_response
 
-    def get_tweets(self, start_search_time: Union[str, datetime] = None, stop_search_time: Union[str, datetime] = None):
+    def get_tweets(self, user_id: str, start_search_time: Union[str, datetime] = None, stop_search_time: Union[str, datetime] = None):
         """
         The function extracts the tweets of a given/specified user, within the given time range.
         """
@@ -117,15 +127,18 @@ class TwitterAPI(ApiAuthentication):
 
         # Prepare the api request
         self.create_header(
-            header_dict={"User-Agent": "v2FollowingLookupPython"}
+            header_dict={"User-Agent": "v2UserTweetsPython"}
         )
         self.create_parameters(
-            parameter_dict={'end_time': dt_most_recent_string, 'tweet.fields': 'created_at'}
+            parameter_dict={
+                'user_id': user_id,
+                'end_time': dt_most_recent_string, 
+                'tweet.fields': 'created_at'}
         )
         self.create_url()
 
         # Make the api request
-        json_response = self.connect_to_endpoint(self.url, self.params)
+        json_response = self.connect_to_endpoint(self.url, self.parameters)
 
         # Extract the oldest object id 'oldest_id' from the metadata of the response
         oldest_id = json_response['meta']['oldest_id']
@@ -214,13 +227,30 @@ class TwitterAPI(ApiAuthentication):
         return {'data': transformed_data, 'meta': _og_meta}
 
 def main():
+    user_id = "969716112752553985"  # first from ct_accounts.json
+
     api = TwitterAPI()
-    api.create_header(
-            header_dict={"User-Agent": "v2FollowingLookupPython"}
-        )
-    api.create_url()
-    print(api.url)
-    
+
+    most_recent_time = '2021-10-22T10:30:01.000Z'  # HAS TO BE format like YYYY-MM-DDTHH:mm:ss.000Z
+    stop_search_time = api.get_stop_search_time(start_time=most_recent_time)
+
+    print(f'start time : {most_recent_time}, stop time : {stop_search_time}')
+    x = api.get_tweets(
+        user_id=user_id,
+        start_search_time=most_recent_time,
+        stop_search_time=stop_search_time
+    )
+
+    print(x, len(x))
+
+def test():
+    user_id = "969716112752553985"  # first from ct_accounts.json
+
+    test_url = "https://api.twitter.com/2/users/%s/tweets?%s=%s"
+    test_data = (user_id, 'tweet.fields', 'created_at')
+
+    print(test_url % test_data)
 
 if __name__ == '__main__':
-    main()
+    # main()
+    test()
