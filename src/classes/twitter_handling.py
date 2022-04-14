@@ -132,7 +132,7 @@ class TwitterAPI(ApiAuthentication):
         self.create_parameters(
             parameter_dict={
                 'user_id': user_id,
-                'end_time': dt_most_recent_string, 
+                'end_time': dt_most_recent_string,  # bepaald de meest recente tweet die gelezen moet worden
                 'tweet.fields': 'created_at'}
         )
         self.create_url()
