@@ -8,11 +8,10 @@ and comments will refer to this account as the base_user.
 import dotenv
 import json
 
+from typing import Union
 from datetime import datetime, timedelta
 
 from api_authentication_class import ApiAuthentication
-
-from typing import Union
 
 
 class TwitterAPI(ApiAuthentication):
@@ -34,7 +33,7 @@ class TwitterAPI(ApiAuthentication):
         """
         MIND YOUR STEP
 
-        de methofd is belangrijk in de recursieve method get_tweets (komt nog). Bouw deze 
+        de method is belangrijk in de recursieve method get_tweets (komt nog). Bouw deze 
         gelijk goed in. 
 
         user_id moet altijd de eerst parameter zijn, omdat deze zijn eigen plaats heeft in de query path
@@ -79,6 +78,7 @@ class TwitterAPI(ApiAuthentication):
             )
 
         # Completing the base URL using the parameter data
+        ## voor string formatting best practices, zie: https://realpython.com/python-string-formatting/
         print(url_base)
         
 
