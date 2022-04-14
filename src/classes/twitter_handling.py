@@ -79,7 +79,12 @@ class TwitterAPI(ApiAuthentication):
 
         # Completing the base URL using the parameter data
         ## voor string formatting best practices, zie: https://realpython.com/python-string-formatting/
+        ## stappen
+        ## user_id invoegen
+        ## als meer params add '?'
+        ## voor elke key-val item die in staan die toevoegen aan het eind van de url met scheidingsteken '&' tussen elke key
         print(url_base)
+
         
 
     """
@@ -92,6 +97,7 @@ class TwitterAPI(ApiAuthentication):
         with open("./{}/{}".format(folder_name, file_name), 'r') as json_file:
             return json.load(json_file)
 
+    # todo: onderstaande twee methods omschrijven zodat ze read_json() gebruiken
     @staticmethod
     def read_resource(file_name: str) -> dict:
         with open('./res/{}'.format(file_name)) as res_file:
