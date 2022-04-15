@@ -5,6 +5,7 @@
     "timestamp": "(datetime object) timestamp in twitterformat (?)",
     "user_id": "(int) id number",
     "username": "(string)",
+    "followers": "(int)",
     "user_tweets": [
         {
             "tweet_id": "(int) id number",
