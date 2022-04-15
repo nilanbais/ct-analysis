@@ -79,7 +79,7 @@ class DataBaseConnection():
         if check_bool:
             self.active_collection = database.get_collection(collection_name)
         elif not check_bool:
-            raise Exception("You're trying to activate a collectioin that doesn't exists in the selected database, cuh. Use the method 'list_collections' to see the available colletions in a database")
+            raise Exception("You're trying to activate a collection that doesn't exists in the selected database, cuh. Use the method 'list_collections' to see the available colletions in a database")
 
     def check_collection_in_database(self, collection_name: str) -> bool:
         collection_available = True if collection_name in [name for name in self.list_collections(self.active_database)] else False
