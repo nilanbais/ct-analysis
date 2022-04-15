@@ -25,7 +25,7 @@ class TwitterAPI(ApiAuthentication):
 
         self.API_URL_MAP = self.read_resource(file_name=self.__TWITTER_API_URL_MAP_FILE)
 
-        self.dt = DataTransformer()
+        self.DT = DataTransformer()
     
     """
     Methods to override attributes in ApiAthentication
@@ -144,10 +144,10 @@ class TwitterAPI(ApiAuthentication):
         print('running get_tweets()')
         # Get the oldest time in a datetime object
         dt_most_recent = datetime.strptime(start_search_time, self.__TWITTER_API_TIME_FORMAT) if isinstance(start_search_time, str) else start_search_time
-        dt_most_recent_string = self.dt.get_RFC_timestamp(dt_object=dt_most_recent)
+        dt_most_recent_string = self.DT.get_RFC_timestamp(dt_object=dt_most_recent)
 
         dt_stop_time = datetime.strptime(stop_search_time, self.__TWITTER_API_TIME_FORMAT) if isinstance(stop_search_time, str) else stop_search_time
-        dt_stop_time_string = self.dt.get_RFC_timestamp(dt_object=dt_stop_time)
+        dt_stop_time_string = self.DT.get_RFC_timestamp(dt_object=dt_stop_time)
 
         # Prepare the api request
         self.create_header(
@@ -211,7 +211,6 @@ class TwitterAPI(ApiAuthentication):
         """
         for item in response_data[::-1]:
             if item['id'] == oldest_id:
-                print(item)
                 return datetime.strptime(item['created_at'], self.__TWITTER_API_TIME_FORMAT)
             else:
                 pass
@@ -252,6 +251,9 @@ def main():
     user_id = "899558268795842561"  # first from ct_accounts.json
 
     api = TwitterAPI()
+    
+    following = api.extract_follers_list()
+    pprint(following)
 
     most_recent_time = '2021-10-22T10:30:01.000Z'  # HAS TO BE format like YYYY-MM-DDTHH:mm:ss.000Z
     stop_search_time = api.get_stop_search_time(start_time=most_recent_time)
@@ -263,13 +265,25 @@ def main():
         stop_search_time=stop_search_time
     )
 
-    print(x, len(x))
+    pprint(x)
 
 def test():
-    user_id = "969716112752553985"  # first from ct_accounts.json
+    user_id = "899558268795842561"  # first from ct_accounts.json
     api = TwitterAPI()
-    following = api.extract_follers_list()
-    pprint(following)
+    dt = DataTransformer()
+
+    following = {'id': '899558268795842561', 'name': 'Cred', 'username': 'CryptoCred'}
+
+    most_recent_time = '2021-10-22T10:30:01.000Z'  # HAS TO BE format like YYYY-MM-DDTHH:mm:ss.000Z
+    stop_search_time = api.get_stop_search_time(start_time=most_recent_time)
+    x = api.get_tweets(
+        user_id=user_id,
+        start_search_time=most_recent_time,
+        stop_search_time=stop_search_time
+    )
+    pprint(x)
+    transformed_data = dt.clean_get_tweets_response(input_data=x, additional_data=following)
+    pprint(transformed_data)
 
 if __name__ == '__main__':
     # main()
