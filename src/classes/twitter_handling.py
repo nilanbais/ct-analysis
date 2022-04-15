@@ -5,13 +5,15 @@ need to happen on this data, recieved as a response from the API.
 The API works using a specified user account maintained for the porpose of the automation. The code 
 and comments will refer to this account as the base_user.
 """
-import dotenv
 import json
+import dotenv
 
 from typing import Union
+from pprint import pprint
 from datetime import datetime, timedelta
 
 from api_authentication_class import ApiAuthentication
+from data_transformer_class import DataTransformer
 
 
 class TwitterAPI(ApiAuthentication):
@@ -22,6 +24,8 @@ class TwitterAPI(ApiAuthentication):
         self.__TWITTER_API_URL_MAP_FILE = self.__config["TWITTER_API_URL_MAP_FILE"]
 
         self.API_URL_MAP = self.read_resource(file_name=self.__TWITTER_API_URL_MAP_FILE)
+
+        self.dt = DataTransformer()
     
     """
     Methods to override attributes in ApiAthentication
@@ -29,7 +33,7 @@ class TwitterAPI(ApiAuthentication):
     def create_header(self, header_dict: dict) -> None: 
         self.header = header_dict.copy()
     
-    def create_parameters(self, parameter_dict: dict) -> None:
+    def create_query_parameters(self, parameter_dict: dict) -> None:
         """
         MIND YOUR STEP
 
@@ -39,19 +43,9 @@ class TwitterAPI(ApiAuthentication):
         user_id moet altijd de eerst parameter zijn, omdat deze zijn eigen plaats heeft in de query path
         De overige query parameters kunnnen toegevoegd worden volgens de uitbeidingen :parameter1=:waarde&:parameter2=:waarde&etc
         """
-        self.parameters = parameter_dict.copy()
-    
-    # def create_url_v1(self) -> str:
-    #     """
-    #     MIND YOUR STEP
-
-    #     extract_followers_url = "https://api.twitter.com/2/users/{}/following?{}={}".format(__USER_ID, "max_results", 1000)
-    #     get_tweets_single_users_url = "https://api.twitter.com/2/users/{}/{}?{}={}".format(user_id, 'tweets', 'max_results', 10)
-    #     """
-    #     __USER_ID = self.__config["USER_ID"]
-    #     self.url = "https://api.twitter.com/2/users/{}/following?{}={}".format(__USER_ID, "max_results", 1000)
+        self.query_parameters = parameter_dict.copy()
         
-    def create_url(self, mode: str = 'auto') -> None:
+    def create_url(self, user_id: int, mode: str = 'auto') -> None:
         """
         Method for creating the url for the request.
         keyword arg 'mode' options
@@ -65,62 +59,83 @@ class TwitterAPI(ApiAuthentication):
         will be handled correctly and are added to the parmeters_dict.
         Ever query parameter will be seperated using '&'. name=values to include&name2=value to include2&etc
         """
-        # Extracting base URL using header data
+        # Extracting URL template using header data
         if mode == 'auto':
-            url_base = next((url for user_agent, url in self.API_URL_MAP.items() if user_agent == self.header["User-Agent"]))
+            url_template = next((url for user_agent, url in self.API_URL_MAP.items() if user_agent == self.header["User-Agent"]))
         elif mode == 'following':
-            url_base = next((url for user_agent, url in self.API_URL_MAP.items() if user_agent == "v2FollowingLookupPython"))
+            url_template = next((url for user_agent, url in self.API_URL_MAP.items() if user_agent == "v2FollowingLookupPython"))
         elif mode == 'user tweets':
-            url_base = next((url for user_agent, url in self.API_URL_MAP.items() if user_agent == "v2UserTweetsPython"))
+            url_template = next((url for user_agent, url in self.API_URL_MAP.items() if user_agent == "v2UserTweetsPython"))
         else:
             raise Exception(
                 "The mode you selected werkt niet neef. Please see documentation for the available modes."
             )
 
-        # Completing the base URL using the parameter data
-        ## voor string formatting best practices, zie: https://realpython.com/python-string-formatting/
-        ## stappen
-        ## user_id invoegen
-        ## als meer params add '?'
-        ## voor elke key-val item die in staan die toevoegen aan het eind van de url met scheidingsteken '&' tussen elke key
-        print(url_base)
+        # Adding user_id to the URL to make a base URL
+        url_base = url_template.format(user_id)
 
+        # If any query parameters, add them to the end of the URL following the right conventions
+        if len(self.query_parameters.keys()) > 0:
+            url = url_base + '?'
+
+            # Defining loop with skip statement
+            first_loop_done = False
+            for key, val in self.query_parameters.items():
+
+                if first_loop_done:
+                    url = url + '&'
+
+                url = url + key + '=' + str(',').join([obj for obj in [val]])
+
+                # Changing val of skip statement
+                first_loop_done = True
         
+            self.url = url
+        else:
+            self.url = url_base
 
     """
     Methods to manage reading and writing the data
     """
-    def read_json(file_name: str, folder_name: str) -> dict:
+    def read_json(self, file_name: str, folder_name: str) -> dict:
         """
         Base method (a method that will be extrended to specific use cases)
         """
         with open("./{}/{}".format(folder_name, file_name), 'r') as json_file:
             return json.load(json_file)
 
-    # todo: onderstaande twee methods omschrijven zodat ze read_json() gebruiken
-    @staticmethod
-    def read_resource(file_name: str) -> dict:
-        with open('./res/{}'.format(file_name)) as res_file:
-            return json.load(res_file)
-
-    @staticmethod
-    def store_response(json_data: dict, file_name: str) -> None:
+    def store_json(self, json_data: dict, file_name: str, folder_name: str) -> None:
         """
         THIS METHOD IS GOING TO BE REPLACED WITH THE COMMUNICATION WITH THE MONGODB DATABASE.
         """
-        with open('./data/{}'.format(file_name), 'w') as json_file:
+        with open('./{}/{}'.format(folder_name, file_name), 'w') as json_file:
             json.dump(json_data, json_file)
+
+
+    def read_resource(self, file_name: str) -> dict:
+        return self.read_json(file_name=file_name, folder_name='res')
+
+    def store_response(self, json_data: dict, file_name: str) -> None:
+        return self.store_json(json_data=json_data, file_name=file_name, folder_name='data')
 
     """
     Methods to get a response from the API
     """
     # todo: functie ombouwen tot gebruik self
-    def extract_follers_list(self):
+    def extract_follers_list(self, user_id: Union[None, int] = None, base_user: bool = True):
+        """
+        Method for extracting a list of the accounts a user follows.
+        build in a way it can be applied for any user, but when not specified it used the base_user
+        """ 
+        if base_user:
+            user_id = self.__config['USER_ID']
+
         self.create_header(header_dict={"User-Agent": "v2FollowingLookupPython"})
-        url = self.create_url()
-        params = {}
-        json_response = self.connect_to_endpoint(url, params)
-        return json_response
+        self.create_query_parameters(parameter_dict={})
+        self.create_url(user_id=user_id)
+
+        json_response = self.connect_to_endpoint(self.url, self.query_parameters)
+        return json_response['data']
 
     def get_tweets(self, user_id: str, start_search_time: Union[str, datetime] = None, stop_search_time: Union[str, datetime] = None):
         """
@@ -129,57 +144,54 @@ class TwitterAPI(ApiAuthentication):
         print('running get_tweets()')
         # Get the oldest time in a datetime object
         dt_most_recent = datetime.strptime(start_search_time, self.__TWITTER_API_TIME_FORMAT) if isinstance(start_search_time, str) else start_search_time
-        dt_most_recent_string = self.get_RFC_timestamp(dt_object=dt_most_recent)
+        dt_most_recent_string = self.dt.get_RFC_timestamp(dt_object=dt_most_recent)
 
         dt_stop_time = datetime.strptime(stop_search_time, self.__TWITTER_API_TIME_FORMAT) if isinstance(stop_search_time, str) else stop_search_time
-        dt_stop_time_string = self.get_RFC_timestamp(dt_object=dt_stop_time)
+        dt_stop_time_string = self.dt.get_RFC_timestamp(dt_object=dt_stop_time)
 
         # Prepare the api request
         self.create_header(
             header_dict={"User-Agent": "v2UserTweetsPython"}
         )
-        self.create_parameters(
+        self.create_query_parameters(
             parameter_dict={
-                'user_id': user_id,
                 'end_time': dt_most_recent_string,  # bepaald de meest recente tweet die gelezen moet worden
                 'tweet.fields': 'created_at'}
         )
-        self.create_url()
+        self.create_url(user_id=user_id)
 
         # Make the api request
-        json_response = self.connect_to_endpoint(self.url, self.parameters)
+        json_response = self.connect_to_endpoint(self.url, self.query_parameters)
+        # pprint(f"response = {json_response}")
+
+        # Check if the response contains any data. if not return empty list
+        if json_response['meta']['result_count'] == 0:
+            return []  # Returning an empty list
 
         # Extract the oldest object id 'oldest_id' from the metadata of the response
         oldest_id = json_response['meta']['oldest_id']
 
         # Extract the oldest time seen in the api response
         oldest_time_response_data = self.isolate_time_oldest_object(oldest_id=oldest_id, response_data=json_response['data'])
-        # print(oldest_time_response_data, type(oldest_time_response_data))
+        # print(f"oldest time in response data: {oldest_time_response_data}")
 
         # Checking if the oldest seen time in response is older then the time we actually need (outside of specified time range)
         oldest_time_within_range = False if (dt_stop_time - oldest_time_response_data <= timedelta(0)) else True
+        # print(f"oldest time within timerange {start_search_time} {stop_search_time}: {oldest_time_within_range}")
         
         # Filtering the json_response to only contain the times within the time range
         return_data = [item for item in json_response['data'] if (datetime.strptime(item['created_at'], self.__TWITTER_API_TIME_FORMAT) - dt_stop_time) >= timedelta(0)]
-        # print(return_data, len(return_data))
+        # pprint(return_data)
         
         # break case of the recursive function
         if oldest_time_within_range:
             return return_data
         
-        return return_data + self.get_tweets(start_search_time=oldest_time_response_data, stop_search_time=stop_search_time)
+        return return_data + self.get_tweets(user_id=user_id, start_search_time=oldest_time_response_data, stop_search_time=stop_search_time)
     
     """
     Methods supporting the workflow for transorming the data received in the response
-    """
-    @staticmethod
-    def get_RFC_timestamp(dt_object: datetime):
-        """
-        returns a string that is a valid RFC3339 date and time notation
-        """
-        __stamp_format = "%Y-%m-%dT%H:%M:%S.000Z"
-        return datetime.strftime(dt_object, __stamp_format)
-    
+    """   
     def get_stop_search_time(self, start_time: Union[str, datetime], time_range: str = 'day') -> timedelta:
         """
         Based on the input this functions returns a stop time to use as input in the recursive search for tweets
@@ -199,6 +211,7 @@ class TwitterAPI(ApiAuthentication):
         """
         for item in response_data[::-1]:
             if item['id'] == oldest_id:
+                print(item)
                 return datetime.strptime(item['created_at'], self.__TWITTER_API_TIME_FORMAT)
             else:
                 pass
@@ -207,36 +220,36 @@ class TwitterAPI(ApiAuthentication):
     """
     Methods for transforming the data received in the response
     """
-    def transform_response(original_response: dict, user_id: str) -> dict:
-        """
-        Function to transform the original response data so it's a combination of the following datapoints.
-        - user_id
-        - tweet_id
-        - created_at
-        - text
-        """
-        # Original data
-        _og_package = original_response.copy()
-        _og_data = _og_package['data']
-        _og_meta = _og_package['meta']
+    # def transform_response(self, original_response: dict, user_id: str) -> dict:
+    #     """
+    #     Function to transform the original response data so it's a combination of the following datapoints.
+    #     - user_id
+    #     - tweet_id
+    #     - created_at
+    #     - text
+    #     """
+    #     # Original data
+    #     _og_package = original_response.copy()
+    #     _og_data = _og_package['data']
+    #     _og_meta = _og_package['meta']
 
-        # Creating var for the result of the tranformation
-        transformed_data = list()
+    #     # Creating var for the result of the tranformation
+    #     transformed_data = list()
 
-        # iter over the items in the data
-        for item in _og_data:
-            # Assign the item.vars to the right iter.vars
-            created_at = item['created_at']
-            tweet_id = item['id']
-            text = item['text']
+    #     # iter over the items in the data
+    #     for item in _og_data:
+    #         # Assign the item.vars to the right iter.vars
+    #         created_at = item['created_at']
+    #         tweet_id = item['id']
+    #         text = item['text']
 
-            # Appending the new data object
-            transformed_data.append({"user_id": user_id, "tweet_id": tweet_id, "created_at": created_at, 'text': text})
+    #         # Appending the new data object
+    #         transformed_data.append({"user_id": user_id, "tweet_id": tweet_id, "created_at": created_at, 'text': text})
 
-        return {'data': transformed_data, 'meta': _og_meta}
+    #     return {'data': transformed_data, 'meta': _og_meta}
 
 def main():
-    user_id = "969716112752553985"  # first from ct_accounts.json
+    user_id = "899558268795842561"  # first from ct_accounts.json
 
     api = TwitterAPI()
 
@@ -254,11 +267,9 @@ def main():
 
 def test():
     user_id = "969716112752553985"  # first from ct_accounts.json
-
-    test_url = "https://api.twitter.com/2/users/%s/tweets?%s=%s"
-    test_data = (user_id, 'tweet.fields', 'created_at')
-
-    print(test_url % test_data)
+    api = TwitterAPI()
+    following = api.extract_follers_list()
+    pprint(following)
 
 if __name__ == '__main__':
     # main()
