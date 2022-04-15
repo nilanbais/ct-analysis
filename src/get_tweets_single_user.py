@@ -18,7 +18,8 @@ from typing import Union
 
 # env variables
 __config = dotenv.dotenv_values('./res/.env')
-__BEARER_TOKEN = __config["BEARER_TOKEN"]
+__bconfig = dotenv.dotenv_values('./res/bearer_tokens.env')
+__BEARER_TOKEN = __bconfig["TWITTER_BEARER_TOKEN"]
 __USERNAME = __config["USERNAME"]
 
 __TWITTER_API_TIME_FORMAT = __config['TWITTER_API_TIME_FORMAT']
@@ -173,7 +174,8 @@ def get_tweets(user_id: str, start_search_time: Union[str, datetime] = None, sto
     # Filtering the json_response to only contain the times within the time range
     return_data = [item for item in json_response['data'] if (datetime.strptime(item['created_at'], __TWITTER_API_TIME_FORMAT) - dt_stop_time) >= timedelta(0)]
     # print(return_data, len(return_data))
-    
+    print(type(return_data))
+
     # break case of the recursive function
     if oldest_time_within_range:
         return return_data
