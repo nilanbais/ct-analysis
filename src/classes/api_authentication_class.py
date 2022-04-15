@@ -37,7 +37,7 @@ class ApiAuthentication:
             )
 
         response = requests.request("GET", url, headers=self._bearer_oauth(header), params=params)
-        print(response.status_code)
+        # print(response.status_code)
         if response.status_code != 200:
             raise Exception(
                 "Request returned an error: {} {}".format(
