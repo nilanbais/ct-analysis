@@ -1,4 +1,5 @@
 {
     "v2UserTweetsPython": "https://api.twitter.com/2/users/{}/tweets",
+    "v2FollowersLookupPython": "https://api.twitter.com/2/users/{}/followers",
     "v2FollowingLookupPython": "https://api.twitter.com/2/users/{}/following"
 }
