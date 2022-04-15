@@ -189,6 +189,17 @@ class TwitterAPI(ApiAuthentication):
         
         return return_data + self.get_tweets(user_id=user_id, start_search_time=oldest_time_response_data, stop_search_time=stop_search_time)
     
+    def get_follower_count(self, user_id: int) -> dict:
+        """
+        Retruns a dictionary like bellow. This structure can be editted over time.
+
+        {
+            followers: (int)
+        }
+
+        """
+        pass
+
     """
     Methods supporting the workflow for transorming the data received in the response
     """   
@@ -215,37 +226,6 @@ class TwitterAPI(ApiAuthentication):
             else:
                 pass
         return False
-
-    """
-    Methods for transforming the data received in the response
-    """
-    # def transform_response(self, original_response: dict, user_id: str) -> dict:
-    #     """
-    #     Function to transform the original response data so it's a combination of the following datapoints.
-    #     - user_id
-    #     - tweet_id
-    #     - created_at
-    #     - text
-    #     """
-    #     # Original data
-    #     _og_package = original_response.copy()
-    #     _og_data = _og_package['data']
-    #     _og_meta = _og_package['meta']
-
-    #     # Creating var for the result of the tranformation
-    #     transformed_data = list()
-
-    #     # iter over the items in the data
-    #     for item in _og_data:
-    #         # Assign the item.vars to the right iter.vars
-    #         created_at = item['created_at']
-    #         tweet_id = item['id']
-    #         text = item['text']
-
-    #         # Appending the new data object
-    #         transformed_data.append({"user_id": user_id, "tweet_id": tweet_id, "created_at": created_at, 'text': text})
-
-    #     return {'data': transformed_data, 'meta': _og_meta}
 
 def main():
     user_id = "899558268795842561"  # first from ct_accounts.json
