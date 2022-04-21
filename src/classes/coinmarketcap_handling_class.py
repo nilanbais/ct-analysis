@@ -41,3 +41,17 @@ class CoinMarketCapAPI(ApiAuthentication):
 
     def store_response(self, json_data: dict, file_name: str) -> None:
         return self.store_json(json_data=json_data, file_name=file_name, folder_name='data')
+
+    """
+    Methods to get a response from the API
+    """
+    def extract_symbol_id_list(self, specified_symbols: list = None) -> dict:
+        """Returns a list of coin ids. 
+            If a list given, it returns the is of the specified coins.
+            If no list given, the method will do a standard request.
+        """
+        pass
+    
+    def get_symbol_data(self, symbol_id: str) -> dict:
+        """Returns a dict with information of the symbols specified."""
+        pass
