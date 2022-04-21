@@ -19,6 +19,20 @@ class CoinMarketCapAPI(ApiAuthentication):
         self.API_URL_MAP = self.read_resource(file_name=self.__CMC_API_URL_MAP)
 
     """
+    Methods to override attributes in ApiAthentication
+    """
+    def create_url(self, mode: str) -> None:
+        """Sets the self.url attribute inherited from ApiAuthentication. """
+        options = ["idmap", "metadata", "latest listings"]
+        mode_options = [key.lower() for key in self.API_URL_MAP.keys()]
+        if mode.lower() in mode_options:
+            self.url = next((url for key, url in self.API_URL_MAP.items() if key == mode))
+        else:
+            raise Exception(
+                "The mode you selected werkt niet neef. Please see documentation for the available modes."
+            )
+
+    """
     Methods to manage reading and writing the data
     """
     def read_json(self, file_name: str, folder_name: str) -> dict:
@@ -50,7 +64,8 @@ class CoinMarketCapAPI(ApiAuthentication):
             If a list given, it returns the is of the specified coins.
             If no list given, the method will do a standard request.
         """
-        pass
+        self.create_header()
+        self.create_query_parameters()
     
     def get_symbol_data(self, symbol_id: str) -> dict:
         """Returns a dict with information of the symbols specified."""

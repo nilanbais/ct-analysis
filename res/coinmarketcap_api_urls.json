@@ -1,5 +1,5 @@
 {
-    "CoinMarketCap ID map": "https://pro-api.coinmarketcap.com/v1/cryptocurrency/map",
+    "IDMap": "https://pro-api.coinmarketcap.com/v1/cryptocurrency/map",
     "Metadata": "https://pro-api.coinmarketcap.com/v1/cryptocurrency/info",
     "Latest listings": "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest"
 }

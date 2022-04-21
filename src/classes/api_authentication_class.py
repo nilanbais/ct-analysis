@@ -57,6 +57,23 @@ class ApiAuthentication:
             )
         return response.json()
 
+    """
+    Methods to override attributes in ApiAthentication
+    """
+    def create_header(self, header_dict: dict = {}) -> None: 
+        self.header = header_dict.copy()
+    
+    def create_query_parameters(self, parameter_dict: dict = {}) -> None:
+        """
+        MIND YOUR STEP
+
+        de method is belangrijk in de recursieve method get_tweets (komt nog). Bouw deze 
+        gelijk goed in. 
+
+        user_id moet altijd de eerst parameter zijn, omdat deze zijn eigen plaats heeft in de query path
+        De overige query parameters kunnnen toegevoegd worden volgens de uitbeidingen :parameter1=:waarde&:parameter2=:waarde&etc
+        """
+        self.query_parameters = parameter_dict.copy()
 
 def main():
     api = ApiAuthentication()

@@ -30,20 +30,20 @@ class TwitterAPI(ApiAuthentication):
     """
     Methods to override attributes in ApiAthentication
     """
-    def create_header(self, header_dict: dict) -> None: 
-        self.header = header_dict.copy()
+    # def create_header(self, header_dict: dict) -> None: 
+    #     self.header = header_dict.copy()
     
-    def create_query_parameters(self, parameter_dict: dict) -> None:
-        """
-        MIND YOUR STEP
+    # def create_query_parameters(self, parameter_dict: dict) -> None:
+    #     """
+    #     MIND YOUR STEP
 
-        de method is belangrijk in de recursieve method get_tweets (komt nog). Bouw deze 
-        gelijk goed in. 
+    #     de method is belangrijk in de recursieve method get_tweets (komt nog). Bouw deze 
+    #     gelijk goed in. 
 
-        user_id moet altijd de eerst parameter zijn, omdat deze zijn eigen plaats heeft in de query path
-        De overige query parameters kunnnen toegevoegd worden volgens de uitbeidingen :parameter1=:waarde&:parameter2=:waarde&etc
-        """
-        self.query_parameters = parameter_dict.copy()
+    #     user_id moet altijd de eerst parameter zijn, omdat deze zijn eigen plaats heeft in de query path
+    #     De overige query parameters kunnnen toegevoegd worden volgens de uitbeidingen :parameter1=:waarde&:parameter2=:waarde&etc
+    #     """
+    #     self.query_parameters = parameter_dict.copy()
         
     def create_url(self, user_id: int, mode: str = 'auto') -> None:
         """
@@ -131,7 +131,7 @@ class TwitterAPI(ApiAuthentication):
             user_id = self.__config['USER_ID']
 
         self.create_header(header_dict={"User-Agent": "v2FollowingLookupPython"})
-        self.create_query_parameters(parameter_dict={})
+        self.create_query_parameters()
         self.create_url(user_id=user_id)
 
         json_response = self.connect_to_endpoint(self.url, self.query_parameters)
