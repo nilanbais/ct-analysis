@@ -7,7 +7,8 @@ and comments will refer to this account as the base_user.
 """
 import json
 import dotenv
-from api_authentication_class import ApiAuthentication
+from classes.api_authentication_class import ApiAuthentication
+from classes.data_transformer_class import DataTransformer
 
 class CoinMarketCapAPI(ApiAuthentication):
 
@@ -66,7 +67,14 @@ class CoinMarketCapAPI(ApiAuthentication):
         """
         self.create_header()
         self.create_query_parameters()
+        # afmaken
     
     def get_symbol_data(self, symbol_id: str) -> dict:
         """Returns a dict with information of the symbols specified."""
         pass
+
+
+class CMCDataTransformer:
+    
+    def __init__(self) -> None:
+        self.general = DataTransformer()

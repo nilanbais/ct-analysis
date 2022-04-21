@@ -12,8 +12,9 @@ from typing import Union
 from pprint import pprint
 from datetime import datetime, timedelta
 
-from api_authentication_class import ApiAuthentication
-from data_transformer_class import DataTransformer
+from classes.api_authentication_class import ApiAuthentication
+from classes.sentiment_analysis_class import SentimentAnalysis
+from classes.data_transformer_class import DataTransformer
 
 
 class TwitterAPI(ApiAuthentication):
@@ -25,8 +26,6 @@ class TwitterAPI(ApiAuthentication):
 
         self.API_URL_MAP = self.read_resource(file_name=self.__TWITTER_API_URL_MAP_FILE)
 
-        self.DT = DataTransformer()
-    
     """
     Methods to override attributes in ApiAthentication
     """
@@ -227,6 +226,48 @@ class TwitterAPI(ApiAuthentication):
                 pass
         return False
 
+
+
+class TwitterDataTransformer:
+
+    def __init__(self) -> None:
+        self.general = DataTransformer()
+        self.sentiment = SentimentAnalysis()
+
+    def clean_get_tweets_response(self, input_data: list, additional_data: dict) -> list:
+        """
+        This method is used for cleaning the response received from TwitterAPI.get_tweets().
+        It takes the input data and builds a data structure like the following:
+        
+        "timestamp": "(datetime object) timestamp in twitterformat (?)",
+        "user_id": "(int)",
+        "username": "(string)",
+        "user_tweets": [
+            {
+                "tweet_id": "(int)",
+                "tweet_text": "(string)",
+                "mentioned_crypto_symbols": (list),
+                "senitment_score": "(int or float) (depending on score scale)"
+            }
+        ]
+        """
+        return_package = list()
+        tweet_list = input_data.copy()
+        user_info = additional_data.copy()
+
+        for tweet in tweet_list:
+            sentiment_object = self.sentiment.get_text_sentiment(input_text=tweet['text'])
+            
+            return_package.append({       
+                "timestamp": tweet['created_at'],
+                "user_id": user_info['id'],
+                "tweet_id": tweet['id'],
+                "tweet_text": tweet['text'],
+                "sentiment": float(sentiment_object.polarity),
+                "subjectivity": float(sentiment_object.subjectivity)})
+            
+        return return_package
+
 def main():
     user_id = "899558268795842561"  # first from ct_accounts.json
 
@@ -250,7 +291,7 @@ def main():
 def test():
     user_id = "899558268795842561"  # first from ct_accounts.json
     api = TwitterAPI()
-    dt = DataTransformer()
+    dt = TwitterDataTransformer()
 
     following = {'id': '899558268795842561', 'name': 'Cred', 'username': 'CryptoCred'}
 
