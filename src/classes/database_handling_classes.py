@@ -85,13 +85,14 @@ class DataBaseConnection():
         collection_available = True if collection_name in [name for name in self.list_collections(self.active_database)] else False
         return collection_available
 
-class DataBaseActions(DataBaseConnection):
+
+class DataBaseActions:
     """
     Class responsible for handling the transormations of the data in the database like adding new data and stuff. 
     THIS CLASS NEEDS TO INHERET THE CONNECTION CLASS FUNCTIONALITY (WHY? DON'T REALLY KNOW BUT TRY TO UNDERSTAND INHERETANCE)
     """
     def __init__(self) -> None:
-        super().__init__()
+        self.connection = DataBaseConnection()
 
     
     

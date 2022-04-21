@@ -7,8 +7,8 @@ and comments will refer to this account as the base_user.
 """
 import json
 import dotenv
-from classes.api_authentication_class import ApiAuthentication
-from classes.data_transformer_class import DataTransformer
+from classes.base_classes.api_authentication_class import ApiAuthentication
+from classes.base_classes.data_transformer_class import DataTransformer
 
 class CoinMarketCapAPI(ApiAuthentication):
 

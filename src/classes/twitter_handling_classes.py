@@ -12,9 +12,9 @@ from typing import Union
 from pprint import pprint
 from datetime import datetime, timedelta
 
-from classes.api_authentication_class import ApiAuthentication
+from classes.base_classes.api_authentication_class import ApiAuthentication
 from classes.sentiment_analysis_class import SentimentAnalysis
-from classes.data_transformer_class import DataTransformer
+from classes.base_classes.data_transformer_class import DataTransformer
 
 
 class TwitterAPI(ApiAuthentication):
