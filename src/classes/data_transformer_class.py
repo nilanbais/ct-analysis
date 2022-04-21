@@ -8,10 +8,10 @@ from datetime import datetime
 
 from sentiment_analysis_class import SentimentAnalysis
 
-class DataTransformer(SentimentAnalysis):
+class DataTransformer:
 
     def __init__(self) -> None:
-        super().__init__()
+        self.sentiment = SentimentAnalysis()
         self.__RFC3339_format = "%Y-%m-%dT%H:%M:%S.000Z"
         
     
@@ -49,7 +49,7 @@ class DataTransformer(SentimentAnalysis):
         user_info = additional_data.copy()
 
         for tweet in tweet_list:
-            sentiment_object = self.get_text_sentiment(input_text=tweet['text'])
+            sentiment_object = self.sentiment.get_text_sentiment(input_text=tweet['text'])
             
             return_package.append({       
                 "timestamp": tweet['created_at'],
