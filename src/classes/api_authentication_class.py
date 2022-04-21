@@ -10,19 +10,25 @@ import requests
 
 class ApiAuthentication:
 
-    def __init__(self, bearer_token_name) -> None:
+    def __init__(self, authentication_token_name) -> None:
         self.__config = dotenv.dotenv_values('./res/authentication.env')
-        self.bearer_token_name = bearer_token_name  # has to be set by the child class as input variable
+        self.authentication_token_name = authentication_token_name  # has to be set by the child class as input variable
         self.header = None  # set by create_header
         self.url = None  # set by create_url
         self.query_parameters = None  # set by create_parameters
     
+    def api_key_auth(self, header) -> dict:
+        """Returns a header with the correct authentication key, val pair."""
+        pass
+    
     def _bearer_oauth(self, header) -> dict:
+        """Returns a header with the correct authentication bearer token."""
         header_oath = header.copy()  # Copy to make sure the token isn't added to the header attribute
-        header_oath["Authorization"] = "Bearer {}".format(self.__config[self.bearer_token_name])
+        header_oath["Authorization"] = "Bearer {}".format(self.__config[self.authentication_token_name])
         return header_oath
     
     def connect_to_endpoint(self, url, header, params: dict = {}) -> dict:
+        """Returns the response of the API call."""
         if self.header is None:
             raise Exception(
                 "No header created."
