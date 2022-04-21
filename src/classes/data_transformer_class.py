@@ -6,14 +6,13 @@ and return a new object that contains the transformed data.
 """
 from datetime import datetime
 
-from sentiment_analysis_class import SentimentAnalysis
 
 class DataTransformer:
 
     def __init__(self) -> None:
         self.__RFC3339_format = "%Y-%m-%dT%H:%M:%S.000Z"
         
-        
+
     def get_RFC_timestamp(self, dt_object: datetime):
         """
         Returns a string that is a valid RFC3339 date and time notation.
