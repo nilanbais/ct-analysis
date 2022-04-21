@@ -17,9 +17,11 @@ class ApiAuthentication:
         self.url = None  # set by create_url
         self.query_parameters = None  # set by create_parameters
     
-    def api_key_auth(self, header) -> dict:
+    def _api_key_auth(self, header) -> dict:
         """Returns a header with the correct authentication key, val pair."""
-        pass
+        header_auth = header.copy()
+        header_auth[{"X-CMC_PRO_API_KEY"}] = "".format(self.__config[self.authentication_token_name]) 
+        return header_auth
     
     def _bearer_oauth(self, header) -> dict:
         """Returns a header with the correct authentication bearer token."""
@@ -27,7 +29,7 @@ class ApiAuthentication:
         header_oath["Authorization"] = "Bearer {}".format(self.__config[self.authentication_token_name])
         return header_oath
     
-    def connect_to_endpoint(self, url, header, params: dict = {}) -> dict:
+    def connect_to_endpoint(self, url, header, authentication: str, params: dict = {}) -> dict:
         """Returns the response of the API call."""
         if self.header is None:
             raise Exception(
@@ -41,8 +43,11 @@ class ApiAuthentication:
             raise Exception(
                 "No parameter object created."
             )
-
-        response = requests.request("GET", url, headers=self._bearer_oauth(header), params=params)
+        
+        if authentication.lower() == "bearer token":
+            response = requests.request("GET", url, headers=self._bearer_oauth(header), params=params)
+        elif authentication.lower() == "api key":
+            response = requests.request("GET", url, headers=self._api_key_auth(header), params=params)
         # print(response.status_code)
         if response.status_code != 200:
             raise Exception(
