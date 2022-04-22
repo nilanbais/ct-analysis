@@ -27,6 +27,8 @@ class TwitterAPI(ApiAuthentication):
 
         self.API_URL_MAP = self.read_resource(file_name=self.__TWITTER_API_URL_MAP_FILE)
 
+        self.data_transform = DataTransformer()
+
     """
     Methods to override attributes in ApiAthentication
     """
@@ -144,10 +146,10 @@ class TwitterAPI(ApiAuthentication):
         print('running get_tweets()')
         # Get the oldest time in a datetime object
         dt_most_recent = datetime.strptime(start_search_time, self.__TWITTER_API_TIME_FORMAT) if isinstance(start_search_time, str) else start_search_time
-        dt_most_recent_string = self.DT.get_RFC_timestamp(dt_object=dt_most_recent)
+        dt_most_recent_string = self.data_transform.get_RFC_timestamp(dt_object=dt_most_recent)
 
         dt_stop_time = datetime.strptime(stop_search_time, self.__TWITTER_API_TIME_FORMAT) if isinstance(stop_search_time, str) else stop_search_time
-        dt_stop_time_string = self.DT.get_RFC_timestamp(dt_object=dt_stop_time)
+        dt_stop_time_string = self.data_transform.get_RFC_timestamp(dt_object=dt_stop_time)
 
         # Prepare the api request
         self.create_header(
