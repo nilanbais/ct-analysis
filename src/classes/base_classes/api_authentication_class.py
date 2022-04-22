@@ -20,7 +20,7 @@ class ApiAuthentication:
     def _api_key_auth(self, header) -> dict:
         """Returns a header with the correct authentication key, val pair."""
         header_auth = header.copy()
-        header_auth[{"X-CMC_PRO_API_KEY"}] = "".format(self.__config[self.authentication_token_name]) 
+        header_auth["X-CMC_PRO_API_KEY"] = self.__config[self.authentication_token_name]
         return header_auth
     
     def _bearer_oauth(self, header) -> dict:
@@ -29,7 +29,7 @@ class ApiAuthentication:
         header_oath["Authorization"] = "Bearer {}".format(self.__config[self.authentication_token_name])
         return header_oath
     
-    def connect_to_endpoint(self, url, header, authentication: str, params: dict = {}) -> dict:
+    def connect_to_endpoint(self, authentication: str, url: str, header: dict, params: dict = {}) -> dict:
         """Returns the response of the API call."""
         if self.header is None:
             raise Exception(
@@ -48,7 +48,7 @@ class ApiAuthentication:
             response = requests.request("GET", url, headers=self._bearer_oauth(header), params=params)
         elif authentication.lower() == "api key":
             response = requests.request("GET", url, headers=self._api_key_auth(header), params=params)
-        # print(response.status_code)
+        print(response.status_code)
         if response.status_code != 200:
             raise Exception(
                 "Request returned an error: {} {}".format(

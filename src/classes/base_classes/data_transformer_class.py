@@ -5,6 +5,7 @@ Each method in the class needs to take an input package and maybe some additiona
 and return a new object that contains the transformed data.
 """
 from datetime import datetime
+from typing import List
 
 
 class DataTransformer:
@@ -24,3 +25,7 @@ class DataTransformer:
         Returns a datatime object from a RFC3339 timestamp.
         """
         return datetime.strptime(rfc_timestamp, self.__RFC3339_format)
+
+    @staticmethod
+    def list_to_string(input_list: List[str]) -> str:
+        return ",".join(input_list)

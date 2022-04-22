@@ -12,9 +12,10 @@ from typing import Union
 from pprint import pprint
 from datetime import datetime, timedelta
 
-from classes.base_classes.api_authentication_class import ApiAuthentication
-from classes.sentiment_analysis_class import SentimentAnalysis
-from classes.base_classes.data_transformer_class import DataTransformer
+from base_classes.api_authentication_class import ApiAuthentication
+from base_classes.data_transformer_class import DataTransformer
+
+from text_analyse_classes import SentimentAnalysis
 
 
 class TwitterAPI(ApiAuthentication):
@@ -133,7 +134,7 @@ class TwitterAPI(ApiAuthentication):
         self.create_query_parameters()
         self.create_url(user_id=user_id)
 
-        json_response = self.connect_to_endpoint(self.url, self.query_parameters)
+        json_response = self.connect_to_endpoint(authentication='bearer token', url=self.url, params=self.query_parameters)
         return json_response['data']
 
     def get_tweets(self, user_id: str, start_search_time: Union[str, datetime] = None, stop_search_time: Union[str, datetime] = None):
