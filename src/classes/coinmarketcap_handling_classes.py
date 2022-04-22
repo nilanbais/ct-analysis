@@ -21,7 +21,7 @@ class CoinMarketCapAPI(ApiAuthentication):
 
         self.API_URL_MAP = self.read_resource(file_name=self.__CMC_API_URL_MAP)
 
-        self.data_trandform = DataTransformer()
+        self.data_trandform = DataTransformer()  # bij CMCDataTransform of iets met deze dubbeling ??
 
     """
     Methods to override attributes in ApiAthentication
