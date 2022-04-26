@@ -32,7 +32,7 @@ class DataBaseConnection():
     """
     def __init__(self) -> None:
         # env variables
-        self.__config = dotenv.dotenv_values('./res/.env')
+        self.__config = dotenv.dotenv_values('./res/authentication.env')
 
         self.active_database = None  # set by set_active_database in DataBaseActions
         self.active_collection = None  # set by set_active_collection in DataBaseActions
@@ -41,7 +41,7 @@ class DataBaseConnection():
     # Connection Methods
     """
     def init_client(self) -> MongoClient:
-        client = pymongo.MongoClient("mongodb+srv://m001-student:{0}@sandbox.5yy1m.mongodb.net/{1}?retryWrites=true&w=majority".format(self.__config['DB_PASSWORD'],self.__config['DB_NAME']))
+        client = pymongo.MongoClient(self.__config["DB_CONNECTION_STRING"].format(self.__config['DB_PASSWORD'],self.__config['DB_NAME']))
         return client
     
     def test_connection():
