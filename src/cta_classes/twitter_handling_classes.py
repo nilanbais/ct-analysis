@@ -31,22 +31,7 @@ class TwitterAPI(ApiAuthentication):
 
     """
     Methods to override attributes in ApiAthentication
-    """
-    # def create_header(self, header_dict: dict) -> None: 
-    #     self.header = header_dict.copy()
-    
-    # def create_query_parameters(self, parameter_dict: dict) -> None:
-    #     """
-    #     MIND YOUR STEP
-
-    #     de method is belangrijk in de recursieve method get_tweets (komt nog). Bouw deze 
-    #     gelijk goed in. 
-
-    #     user_id moet altijd de eerst parameter zijn, omdat deze zijn eigen plaats heeft in de query path
-    #     De overige query parameters kunnnen toegevoegd worden volgens de uitbeidingen :parameter1=:waarde&:parameter2=:waarde&etc
-    #     """
-    #     self.query_parameters = parameter_dict.copy()
-        
+    """       
     def create_url(self, user_id: int, mode: str = 'auto') -> None:
         """
         Method for creating the url for the request.
@@ -96,6 +81,8 @@ class TwitterAPI(ApiAuthentication):
         else:
             self.url = url_base
 
+        print(self.url)
+
     """
     Methods to manage reading and writing the data
     """
@@ -123,7 +110,7 @@ class TwitterAPI(ApiAuthentication):
     """
     Methods to get a response from the API
     """
-    # todo: functie ombouwen tot gebruik self
+    # todo: functie ombouwen input voor parameters
     def extract_following_list(self, user_id: Union[None, int] = None, base_user: bool = True):
         """
         Method for extracting a list of the accounts a user follows.
