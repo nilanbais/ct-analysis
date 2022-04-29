@@ -136,7 +136,7 @@ class TwitterAPI(ApiAuthentication):
         self.create_query_parameters()
         self.create_url(user_id=user_id)
 
-        json_response = self.connect_to_endpoint(authentication='bearer token', url=self.url, params=self.query_parameters)
+        json_response = self.connect_to_endpoint(authentication='bearer token', url=self.url, header=self.header, params=self.query_parameters)
         return json_response['data']
 
     def get_tweets(self, user_id: str, start_search_time: Union[str, datetime] = None, stop_search_time: Union[str, datetime] = None):
