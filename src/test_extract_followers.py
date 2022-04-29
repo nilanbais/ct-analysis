@@ -17,7 +17,7 @@ twitter_data_transformer = TwitterDataTransformer()
 
 @get_followed_acc_line.task()
 def get_list():
-    return twitter_api.extract_followers_list()
+    return twitter_api.extract_following_list()
 
 @get_followed_acc_line.task(depends_on=get_list)
 def print_result(input_data):
