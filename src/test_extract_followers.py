@@ -5,6 +5,6 @@ The code needs to do the following:
 - [] prep the data structure user_document.py for each user
 - [] upload the data to the database (or print if no upload method available yet) 
 """
-from .. import cta_classes as cta
+from cta_classes.pipeline_class import Pipeline
 
-upload_followed_accounts_base_user = cta.Pipeline()
+upload_followed_accounts_base_user = Pipeline()
