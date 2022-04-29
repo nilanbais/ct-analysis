@@ -1,0 +1,8 @@
+{
+    "timestamp": "<date>",
+    "tweet_id": "<int> (PK)",
+    "user_id": "<int> (FK)",
+    "tweet_text": "<sting>",
+    "crypto_symbols": "<str> (FK) <- each seen symbol is a FK",
+    "sentiment_score": "<float>"
+}

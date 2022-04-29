@@ -1,0 +1,6 @@
+{
+    "user_id": "<string> (PK)",
+    "username": "<string>",
+    "joined_since": "<date>",
+    "followers": "<int>"
+}

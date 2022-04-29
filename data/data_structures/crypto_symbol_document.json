@@ -1,0 +1,19 @@
+{
+    "crypto_name": "<string>", 
+    "crypto_symbol": "<string> (PK)",
+    "live_since": "<date>",
+    "times_mentioned (total)": "<int>",
+    "times_mentioned (intervals)": {
+        "times_mentioned (weekly)": "<int>",
+        "times_mentioned (daily)": "<int>",
+        "times_mentioned (hourly)": "<int>"
+    },
+    "lunar_crush_score": "<int>",
+    "coinmarketcap_id": "<int>",
+    "marketcap_cmc": "<float>",
+    "price_cmc": "<float>",
+    "volume_24h_cmc": "<float>",
+    "circulating_supply_cmc": "<float>",
+    "24h_change_cmc": "<float>",
+    "7d_change_cmc": "<float>"
+}
