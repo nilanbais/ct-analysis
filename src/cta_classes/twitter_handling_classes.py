@@ -18,8 +18,6 @@ from cta_classes.base_classes.api_authentication_class import ApiAuthentication
 from cta_classes.base_classes.data_transformer_class import DataTransformer
 
 
-
-
 class TwitterAPI(ApiAuthentication):
     def __init__(self) -> None:
         super().__init__('TWITTER_BEARER_TOKEN')
