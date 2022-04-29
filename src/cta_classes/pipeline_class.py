@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 This script contains the buildingblocks used when building a pipeline.
 """

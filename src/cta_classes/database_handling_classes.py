@@ -140,7 +140,8 @@ def main():
     dba = DataBaseActions()
     print(dba.list_databases(dba.client))
 
-    dba.set_active_database(client=dba.client, database_name='x')
+    # dba.set_active_database(client=dba.client, database_name='x')
+    print('g')
 
 
 if __name__ == '__main__':
