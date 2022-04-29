@@ -5,9 +5,8 @@ The code needs to do the following:
 - [] prep the data structure user_document.py for each user
 - [] upload the data to the database (or print if no upload method available yet) 
 """
-import pprint
+from pprint import pprint
 
-from matplotlib.pyplot import get
 from cta_classes.pipeline_class import Pipeline
 from cta_classes.twitter_handling_classes import TwitterAPI, TwitterDataTransformer
 
@@ -25,4 +24,4 @@ def print_result(input_data):
     pprint(input_data)
 
 
-result = get_followed_acc_line.run()
+result = get_followed_acc_line.run() 
