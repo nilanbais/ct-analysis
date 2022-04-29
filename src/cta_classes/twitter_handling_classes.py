@@ -124,7 +124,7 @@ class TwitterAPI(ApiAuthentication):
     Methods to get a response from the API
     """
     # todo: functie ombouwen tot gebruik self
-    def extract_follers_list(self, user_id: Union[None, int] = None, base_user: bool = True):
+    def extract_followers_list(self, user_id: Union[None, int] = None, base_user: bool = True):
         """
         Method for extracting a list of the accounts a user follows.
         build in a way it can be applied for any user, but when not specified it used the base_user
@@ -276,7 +276,7 @@ def main():
 
     api = TwitterAPI()
     
-    following = api.extract_follers_list()
+    following = api.extract_followers_list()
     pprint(following)
 
     most_recent_time = '2021-10-22T10:30:01.000Z'  # HAS TO BE format like YYYY-MM-DDTHH:mm:ss.000Z
