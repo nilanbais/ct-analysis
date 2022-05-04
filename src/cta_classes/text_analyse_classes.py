@@ -35,7 +35,8 @@ class CryptoSymbolFinder:
         break_statement is wanneer de start en eind index zo dicht bij elkaar liggen dat het gegarandeerd geen crypto symbool is.
 
         Waarschijnlijk is het qua prestatie beter om eerst recursief een lijst met mogelijke crypto symbolen te verzamelen, en vervolgens deze te filteren
-        op de daadwerkelijke symbolen en de ruis die mee kwam door de regex string (QNT en het woord 'ALL' geven beide een hit).
+        op de daadwerkelijke symbolen en de ruis die mee kwam door de regex string (QNT en het woord 'ALL' geven beide een hit). Voor de faya kan ook een
+        method gebouwd worden die het filteren tijdens de recursieve werking doet, om vervolgens de prestaties van beide methods te timen.
 
         """
 
