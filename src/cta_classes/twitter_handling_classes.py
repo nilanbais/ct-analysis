@@ -89,7 +89,7 @@ class TwitterAPI(ApiAuthentication):
     Methods to get a response from the API
     """
     # todo: functie ombouwen input voor parameters
-    def extract_following_list(self, user_id: Union[None, int] = None, base_user: bool = True):
+    def extract_following_list(self, user_id: Union[None, int] = None, base_user: bool = True, addidional_header_vals: dict = {}, additional_query_parameter_vals: dict = {}) -> dict:
         """
         Method for extracting a list of the accounts a user follows.
         build in a way it can be applied for any user, but when not specified it used the base_user
@@ -97,14 +97,17 @@ class TwitterAPI(ApiAuthentication):
         if base_user:
             user_id = self.__config['USER_ID']
 
-        self.create_header(header_dict={"User-Agent": "v2FollowingLookupPython"})
-        self.create_query_parameters(parameter_dict={"user.fields": "public_metrics"})
+        self.create_header(header_dict=self._extend_dict_object(base_dict={"User-Agent": "v2FollowingLookupPython"},
+                                                                additional_values=addidional_header_vals))
+        self.create_query_parameters(parameter_dict=self._extend_dict_object(base_dict={"user.fields": "public_metrics"},
+                                                                             additional_values=additional_query_parameter_vals))
         self.create_url(user_id=user_id)
 
         json_response = self.connect_to_endpoint(authentication='bearer token', url=self.url, header=self.header, params=self.query_parameters)
         return json_response['data']
 
-    def get_tweets(self, user_id: str, start_search_time: Union[str, datetime] = None, stop_search_time: Union[str, datetime] = None):
+    def get_tweets(self, user_id: str, start_search_time: Union[str, datetime] = None, stop_search_time: Union[str, datetime] = None, 
+        additional_header_vals: dict = {}, additional_query_parameter_vals: dict = {}) -> dict:
         """
         The function extracts the tweets of a given/specified user, within the given time range.
         """
@@ -118,12 +121,13 @@ class TwitterAPI(ApiAuthentication):
 
         # Prepare the api request
         self.create_header(
-            header_dict={"User-Agent": "v2UserTweetsPython"}
+            header_dict=self._extend_dict_object(base_dict={"User-Agent": "v2UserTweetsPython"}, 
+                                                 additional_values=additional_header_vals)
         )
         self.create_query_parameters(
-            parameter_dict={
-                'end_time': dt_most_recent_string,  # bepaald de meest recente tweet die gelezen moet worden
-                'tweet.fields': 'created_at'}
+            parameter_dict=self._extend_dict_object(base_dict={'end_time': dt_most_recent_string,  # bepaald de meest recente tweet die gelezen moet worden
+                                                               'tweet.fields': 'created_at'},
+                                                    additional_values=additional_query_parameter_vals)
         )
         self.create_url(user_id=user_id)
 
@@ -183,6 +187,11 @@ class TwitterAPI(ApiAuthentication):
                 pass
         return False
 
+    def _extend_dict_object(base_dict: dict, additional_values: dict) -> dict:
+        """Helper method to merge two dicts and return the result.
+        Returns: one large dict consisting of the two input dicts.        
+        """
+        return base_dict.update(additional_values)
 
 
 class TwitterDataTransformer:
