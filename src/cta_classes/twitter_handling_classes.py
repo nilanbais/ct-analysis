@@ -12,10 +12,10 @@ from typing import Union
 from pprint import pprint
 from datetime import datetime, timedelta
 
-from cta_classes.text_analyse_classes import SentimentAnalysis
+from text_analyse_classes import SentimentAnalysis
 
-from cta_classes.base_classes.api_authentication_class import ApiAuthentication
-from cta_classes.base_classes.data_transformer_class import DataTransformer
+from base_classes.api_authentication_class import ApiAuthentication
+from base_classes.data_transformer_class import DataTransformer
 
 
 class TwitterAPI(ApiAuthentication):
@@ -58,30 +58,8 @@ class TwitterAPI(ApiAuthentication):
                 "The mode you selected werkt niet neef. Please see documentation for the available modes."
             )
 
-        # Adding user_id to the URL to make a base URL
-        url_base = url_template.format(user_id)
-
-        # If any query parameters, add them to the end of the URL following the right conventions
-        if len(self.query_parameters.keys()) > 0:
-            url = url_base + '?'
-
-            # Defining loop with skip statement
-            first_loop_done = False
-            for key, val in self.query_parameters.items():
-
-                if first_loop_done:
-                    url = url + '&'
-
-                url = url + key + '=' + str(',').join([obj for obj in [val]])
-
-                # Changing val of skip statement
-                first_loop_done = True
-        
-            self.url = url
-        else:
-            self.url = url_base
-
-        print(self.url)
+        # Adding user_id to the URL to complete the url
+        self.url = url_template.format(user_id)
 
     """
     Methods to manage reading and writing the data
@@ -120,7 +98,7 @@ class TwitterAPI(ApiAuthentication):
             user_id = self.__config['USER_ID']
 
         self.create_header(header_dict={"User-Agent": "v2FollowingLookupPython"})
-        self.create_query_parameters()
+        self.create_query_parameters(parameter_dict={"user.fields": "public_metrics"})
         self.create_url(user_id=user_id)
 
         json_response = self.connect_to_endpoint(authentication='bearer token', url=self.url, header=self.header, params=self.query_parameters)
@@ -177,17 +155,6 @@ class TwitterAPI(ApiAuthentication):
             return return_data
         
         return return_data + self.get_tweets(user_id=user_id, start_search_time=oldest_time_response_data, stop_search_time=stop_search_time)
-    
-    def get_follower_count(self, user_id: int) -> dict:
-        """
-        Retruns a dictionary like bellow. This structure can be editted over time.
-
-        {
-            followers: (int)
-        }
-
-        """
-        pass
 
     """
     Methods supporting the workflow for transorming the data received in the response
@@ -266,17 +233,17 @@ def main():
     following = api.extract_following_list()
     pprint(following)
 
-    most_recent_time = '2021-10-22T10:30:01.000Z'  # HAS TO BE format like YYYY-MM-DDTHH:mm:ss.000Z
-    stop_search_time = api.get_stop_search_time(start_time=most_recent_time)
+    # most_recent_time = '2021-10-22T10:30:01.000Z'  # HAS TO BE format like YYYY-MM-DDTHH:mm:ss.000Z
+    # stop_search_time = api.get_stop_search_time(start_time=most_recent_time)
 
-    print(f'start time : {most_recent_time}, stop time : {stop_search_time}')
-    x = api.get_tweets(
-        user_id=user_id,
-        start_search_time=most_recent_time,
-        stop_search_time=stop_search_time
-    )
+    # print(f'start time : {most_recent_time}, stop time : {stop_search_time}')
+    # x = api.get_tweets(
+    #     user_id=user_id,
+    #     start_search_time=most_recent_time,
+    #     stop_search_time=stop_search_time
+    # )
 
-    pprint(x)
+    # pprint(x)
 
 def test():
     user_id = "899558268795842561"  # first from ct_accounts.json
@@ -297,5 +264,5 @@ def test():
     pprint(transformed_data)
 
 if __name__ == '__main__':
-    # main()
-    test()
+    main()
+    # test()
