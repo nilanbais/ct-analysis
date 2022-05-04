@@ -28,4 +28,8 @@ class DataTransformer:
 
     @staticmethod
     def list_to_string(input_list: List[str]) -> str:
-        return ",".join(input_list)
+        """
+        Returns a string of the items in a list without any space between 
+        the commas and letters
+        """
+        return ",".join(input_list) if len(input_list) > 0 else ""
