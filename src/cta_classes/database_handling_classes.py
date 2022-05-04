@@ -54,19 +54,7 @@ class DataBaseConnection():
         Methode for testing the connection with the database
         """
         pass
-    
-    """
-    Info retieval methods
-    """
-    def get_active_database(self) -> Database:
-        """Returns the active database.
-        """
-        return self.active_database
-    
-    def get_active_collection(self) -> Collection:
-        """Returns the active database.
-        """
-        return self.active_collection
+
 
 
 class DataBaseActions:
@@ -175,10 +163,8 @@ class DataBaseActions:
 
 def main():
     dba = DataBaseActions()
-    print(dba.list_databases(dba.client))
-
     # dba.set_active_database(client=dba.client, database_name='x')
-    print('g')
+    print(dba.get_active_database())
 
 def test():
     test_object_1 = {
@@ -229,5 +215,5 @@ def test():
 
 
 if __name__ == '__main__':
-    # main()
-    test()
+    main()
+    # test()
