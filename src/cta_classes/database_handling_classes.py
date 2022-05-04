@@ -21,7 +21,7 @@ import pymongo
 from typing import List
 
 from pymongo import MongoClient
-from pymongo.database import Database
+from pymongo.database import Database, Collection
 
 
 class DataBaseConnection():
@@ -30,11 +30,14 @@ class DataBaseConnection():
     active database and the active collection. With that the class is also extended with functionalities
     to list the available databases and collections and to check if the given database/collection name.
     """
+    __default_database = dotenv.dotenv_values('./res/.env')['DEFAULT_DATABASE']
+
     def __init__(self) -> None:
         # env variables
         self.__config = dotenv.dotenv_values('./res/authentication.env')
+        self.client = self.init_client()
 
-        self.active_database = None  # set by set_active_database in DataBaseActions
+        self.active_database = self.client[DataBaseConnection.__default_database]  # set by set_active_database in DataBaseActions
         self.active_collection = None  # set by set_active_collection in DataBaseActions
 
     """
@@ -51,6 +54,19 @@ class DataBaseConnection():
         Methode for testing the connection with the database
         """
         pass
+    
+    """
+    Info retieval methods
+    """
+    def get_active_database(self) -> Database:
+        """Returns the active database.
+        """
+        return self.active_database
+    
+    def get_active_collection(self) -> Collection:
+        """Returns the active database.
+        """
+        return self.active_collection
 
 
 class DataBaseActions:
@@ -61,44 +77,63 @@ class DataBaseActions:
     ACTION COMPLETED ON THE DATABASE, NOT PART OF THE DATABASE CONNECTION.
     """
     def __init__(self) -> None:
-        self.connection = DataBaseConnection()
-        self.client = self.connection.init_client()
+        self.__connection = DataBaseConnection()
     
     """
     # Database Selection Methods
     """
-    def list_databases(self, client: MongoClient) -> list:
-            return client.list_database_names()
+    def list_databases(self) -> list:
+        """Returns databases available in the client
+        """
+        return self.__connection.client.list_database_names()
+    
+    def check_database_available(self, database_name: str) -> bool:
+        db_available = True if database_name in [name for name in self.list_databases()] else False
+        return db_available
 
-    def set_active_database(self, client: MongoClient, database_name: str) -> None:
+    def set_active_database(self, database_name: str) -> None:
+        """Sets the active database if the given database is available.
+        """
         check_bool = self.check_database_available(database_name)
         
         if check_bool:
-            self.connection.active_database = client.get_database(database_name)
+            self.__connection.active_database = self.__connection.client[database_name]
         elif not check_bool:
-            raise Exception("You're trying to connect to a database that doesn't exists, fam. Use the method 'list_databases' to see the available databases")
-
-    def check_database_available(self, database_name: str) -> bool:
-        db_available = True if database_name in [name for name in self.list_databases(self.client)] else False
-        return db_available
+            raise Exception(f"You're trying to connect to a database that doesn't exists, fam. Bellow are the available databases.\n{self.list_databases()}")
     
+    def get_active_database(self) -> Database:
+        """Returns the active database.
+        """
+        return self.__connection.active_database
+
     """
     # Collection Selection Methods
     """
-    def list_collections(self, database: Database) -> list:
-        return database.list_collection_names()
+    def list_collections(self) -> list:
+        """Returns a list of the available collections in the active database.
+        """
+        return self.__connection.active_database.list_collection_names()
+    
+    def check_collection_in_database(self, collection_name: str) -> bool:
+        """Checks if the given collection is available in the database.
+        """
+        collection_available = True if collection_name in [name for name in self.list_collections()] else False
+        return collection_available
 
-    def set_active_collection(self, database: Database, collection_name: str):
+    def set_active_collection(self, collection_name: str) -> None:
+        """Sets the active collection if the given collection is available.
+        """
         check_bool = self.check_collection_in_database(collection_name)
 
         if check_bool:
-            self.connection.active_collection = database.get_collection(collection_name)
+            self.__connection.active_collection = self.__connection.active_database[collection_name]
         elif not check_bool:
-            raise Exception("You're trying to activate a collection that doesn't exists in the selected database, cuh. Use the method 'list_collections' to see the available colletions in a database")
+            raise Exception(f"You're trying to activate a collection that doesn't exists in the selected database, cuh. Bellow are the available collections.\n{self.list_collections()}")
 
-    def check_collection_in_database(self, collection_name: str) -> bool:
-        collection_available = True if collection_name in [name for name in self.list_collections(self.connection.active_database)] else False
-        return collection_available
+    def get_active_collection(self) -> Collection:
+        """Returns the active database.
+        """
+        return self.__connection.active_collection
 
     """
     Insert/Extract Methods
@@ -108,30 +143,30 @@ class DataBaseActions:
         Inserts a new document into the active or specified collection.
         """
         # Check active database and set if needed
-        if database_name is not None and database_name != self.connection.active_database.name:
+        if database_name is not None and database_name != self.__connection.active_database.name:
             self.set_active_database(database_name=database_name)
         
         # Check active collection and set if needed
-        if collection_name is not None and collection_name != self.connection.active_collection.name:
-            self.set_active_collection(database=self.connection.active_database, collection_name=collection_name)
+        if collection_name is not None and collection_name != self.__connection.active_collection.name:
+            self.set_active_collection(collection_name=collection_name)
         
         # Insert document into active collection
-        self.connection.active_collection.insert_one(document)
+        self.__connection.active_collection.insert_one(document)
 
     def insert_many(self, documents: List[dict], database_name: Database = None, collection_name: str = None) -> None:
         """Checks if the given database and collection are the active ones (if specified).
         Inserts multiple new documents into the active or specified collection.
         """
         # Check active database and set if needed
-        if database_name is not None and database_name != self.connection.active_database.name:
+        if database_name is not None and database_name != self.__connection.active_database.name:
             self.set_active_database(database_name=database_name)
         
         # Check active collection and set if needed
-        if collection_name is not None and collection_name != self.connection.active_collection.name:
-            self.set_active_collection(database=self.connection.active_database, collection_name=collection_name)
+        if collection_name is not None and collection_name != self.__connection.active_collection.name:
+            self.set_active_collection(collection_name=collection_name)
         
         # Insert document into active collection
-        self.connection.active_collection.insert_many(documents)
+        self.__connection.active_collection.insert_many(documents)
 
     """
     Create Replace Update Delete (CRUD) Methods
@@ -146,16 +181,51 @@ def main():
     print('g')
 
 def test():
-    test_object = {
+    test_object_1 = {
         "user_id": "<string> (PK)",
         "username": "<string>",
         "joined_since": "<date>",
         "followers": "<int>"
     }
+    test_object_2 = {
+        "timestamp": "<date>",
+        "tweet_id": "<int> (PK)",
+        "user_id": "<int> (FK)",
+        "tweet_text": "<sting>",
+        "crypto_symbols": "<str> (FK) <- each seen symbol is a FK",
+        "sentiment_score": "<float>"
+    }
+    test_object_3 = {
+        "crypto_name": "<string>", 
+        "crypto_symbol": "<string> (PK)",
+        "live_since": "<date>",
+        "times_mentioned (total)": "<int>",
+        "times_mentioned (intervals)": {
+            "times_mentioned (weekly)": "<int>",
+            "times_mentioned (daily)": "<int>",
+            "times_mentioned (hourly)": "<int>"
+        },
+        "lunar_crush_score": "<int>",
+        "coinmarketcap_id": "<int>",
+        "marketcap_cmc": "<float>",
+        "price_cmc": "<float>",
+        "volume_24h_cmc": "<float>",
+        "circulating_supply_cmc": "<float>",
+        "24h_change_cmc": "<float>",
+        "7d_change_cmc": "<float>"
+    }
+
+    test_object = [test_object_1, test_object_2, test_object_3]
+
     dba = DataBaseActions()
-    dba.set_active_database(client=dba.client, database_name='cta-database')
-    dba.set_active_collection(database='cta-database', collection_name='users')
-    dba.insert_one(document=test_object)
+    dbc = DataBaseConnection()
+    print(dbc.client)
+
+    dba.set_active_database(database_name='cta-database')
+    dba.set_active_collection(collection_name='users')
+
+    dba.insert_many(documents=test_object, collection_name='tweets')
+
 
 
 if __name__ == '__main__':
