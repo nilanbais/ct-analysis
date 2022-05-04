@@ -40,8 +40,10 @@ class DataBaseConnection():
     """
     # Connection Methods
     """
+    # --- LET OP ---
+    # ADMIN ACCOUNT WORDT IN DEVELOPMENT GEBRUIKT, MAAR MOET OMGESCHREVEN WORDEN NAAR READWRITEUSER
     def init_client(self) -> MongoClient:
-        client = pymongo.MongoClient(self.__config["DB_CONNECTION_STRING"].format(self.__config['DB_PASSWORD'],self.__config['DB_NAME']))
+        client = pymongo.MongoClient(self.__config["DB_CONNECTION_STRING"].format(self.__config['DB_ADMIN_PASSWORD'],self.__config['DB_ADMIN_NAME']))
         return client
     
     def test_connection():
@@ -95,7 +97,7 @@ class DataBaseActions:
             raise Exception("You're trying to activate a collection that doesn't exists in the selected database, cuh. Use the method 'list_collections' to see the available colletions in a database")
 
     def check_collection_in_database(self, collection_name: str) -> bool:
-        collection_available = True if collection_name in [name for name in self.list_collections(self.active_database)] else False
+        collection_available = True if collection_name in [name for name in self.list_collections(self.connection.active_database)] else False
         return collection_available
 
     """
@@ -143,6 +145,19 @@ def main():
     # dba.set_active_database(client=dba.client, database_name='x')
     print('g')
 
+def test():
+    test_object = {
+        "user_id": "<string> (PK)",
+        "username": "<string>",
+        "joined_since": "<date>",
+        "followers": "<int>"
+    }
+    dba = DataBaseActions()
+    dba.set_active_database(client=dba.client, database_name='cta-database')
+    dba.set_active_collection(database='cta-database', collection_name='users')
+    dba.insert_one(document=test_object)
+
 
 if __name__ == '__main__':
-    main()
+    # main()
+    test()
