@@ -224,7 +224,7 @@ def test():
     dba.set_active_database(database_name='cta-database')
     dba.set_active_collection(collection_name='users')
 
-    dba.insert_many(documents=test_object, collection_name='tweets')
+    # dba.insert_many(documents=test_object, collection_name='tweets')
 
 
 
