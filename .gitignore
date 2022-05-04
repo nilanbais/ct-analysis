@@ -1,7 +1,13 @@
 .env
 authentication.env
+
 ct_accounts.json
+known_crypto_symbols.json
 tweets_user_969716112752553985.json
+
+
 ideas.txt
+
 __pycache__
+
 old_versions
