@@ -7,7 +7,7 @@ import textblob
 import dotenv
 
 from typing import Union, List
-from base_classes.json_handling_class import JsonHandler
+from cta_classes.base_classes.json_handling_class import JsonHandler
 
 
 class SentimentAnalysis:
