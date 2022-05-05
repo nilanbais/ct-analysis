@@ -12,10 +12,10 @@ from typing import Union
 from pprint import pprint
 from datetime import datetime, timedelta
 
-from text_analyse_classes import SentimentAnalysis
+from cta_classes.text_analyse_classes import SentimentAnalysis
 
-from base_classes.api_authentication_class import ApiAuthentication
-from base_classes.data_transformer_class import DataTransformer
+from cta_classes.base_classes.api_authentication_class import ApiAuthentication
+from cta_classes.base_classes.data_transformer_class import DataTransformer
 
 
 class TwitterAPI(ApiAuthentication):
@@ -86,9 +86,11 @@ class TwitterAPI(ApiAuthentication):
         if base_user:
             user_id = self.__config['USER_ID']
 
-        self.create_header(header_dict=self._extend_dict_object(base_dict={"User-Agent": "v2FollowingLookupPython"},
-                                                                additional_values=addidional_header_vals))
-        self.create_query_parameters(parameter_dict=self._extend_dict_object(base_dict={"user.fields": "public_metrics"},
+        custom_header = self._extend_dict_object(base_dict={"User-Agent": "v2FollowingLookupPython"}, additional_values=addidional_header_vals)
+        print(custom_header)
+
+        self.create_header(header_dict=custom_header)
+        self.create_query_parameters(parameter_dict=self._extend_dict_object(base_dict={"user.fields": "public_metrics"}, 
                                                                              additional_values=additional_query_parameter_vals))
         self.create_url(user_id=user_id)
 
@@ -110,8 +112,7 @@ class TwitterAPI(ApiAuthentication):
 
         # Prepare the api request
         self.create_header(
-            header_dict=self._extend_dict_object(base_dict={"User-Agent": "v2UserTweetsPython"}, 
-                                                 additional_values=additional_header_vals)
+            header_dict=self._extend_dict_object(base_dict={"User-Agent": "v2UserTweetsPython"}, additional_values=additional_header_vals)
         )
         self.create_query_parameters(
             parameter_dict=self._extend_dict_object(base_dict={'end_time': dt_most_recent_string,  # bepaald de meest recente tweet die gelezen moet worden
@@ -176,11 +177,14 @@ class TwitterAPI(ApiAuthentication):
                 pass
         return False
 
+    @staticmethod
     def _extend_dict_object(base_dict: dict, additional_values: dict) -> dict:
         """Helper method to merge two dicts and return the result.
         Returns: one large dict consisting of the two input dicts.        
         """
-        return base_dict.update(additional_values)
+        fresh_dict = base_dict.copy()
+        fresh_dict.update(additional_values)
+        return fresh_dict
 
 
 class TwitterDataTransformer:
