@@ -26,9 +26,6 @@ class JsonHandler:
     
     """ BSON file mehtods
     """
-    def store_bson(self, bson_data: dict, file_name: str, folder_name: str) -> None:
+    def store_bson(self, bson_data: bytes, file_name: str, folder_name: str) -> None:
         with open("./{}/{}".format(folder_name, file_name), 'wb') as bson_file:
             bson_file.write(bson_data)
-    
-    def encode_as_bson(self, input_data):
-        return bson.BSON.encode(input_data)
