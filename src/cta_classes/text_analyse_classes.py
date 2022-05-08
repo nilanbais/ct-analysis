@@ -60,29 +60,36 @@ class CryptoSymbolFinder(JsonHandler, SentimentAnalysis):
         clean_data = [file_data[_]["symbol"] for _ in range(len(file_data))]
         return clean_data
 
-    def find_crypto_symbol(self, input_text: str) -> Union[List[str], str]:
+    def find_crypto_symbols(self, input_text: str) -> Union[List[str], str]:
         """
         Method used to find a crypto symbol and returns the symbols found
 
         The method doesn't take context into account, so results cal be cluttered with symbols that 
         represent common words in all caps, like 'ALL' (as in: 'ALL OF IT')
 
+        First version of this method only matches symbols that contain the signature '$' before the
+        symbol.
         """
-        regex_string = r'\$[A-Z]{3}|[A-Z]{3}'
+        # regex_string = r'\$[A-Z]{3}|[A-Z]{3}'
+        regex_string = r'\$[A-Z]{3}'
 
         match = re.search(regex_string, input_text)
+        print(match)
         if match is None:
             return []
 
         x = match.span()[0]
         y = match.span()[-1]
 
-        symbol = [input_text[x:y]]
+        match_result = input_text[x:y]
+        symbol = match_result[1:]
 
-        if symbol[0] in self.known_crypto_symbols:  # The if-statement needs to exclude words like 'ALL' with some context or sentiment or some.
-            return symbol + self.find_crypto_symbol(input_text=input_text[y:])
+        # If a symbol is found that is unknown, if doesn't take it into account now
+        # Functionality has to be extended, but somewhere else (maybe a pipeline or some)
+        if symbol not in self.known_crypto_symbols: 
+            return [] + self.find_crypto_symbols(input_text=input_text[y:])
 
-        return [] + self.find_crypto_symbol(input_text=input_text[y:])
+        return [symbol] + self.find_crypto_symbols(input_text=input_text[y:])
 
     def kill_non_exsisting_symbols(input_list: list) -> list:
         """Returns a list from which the regex fault are removed.
@@ -110,6 +117,7 @@ class TextAnalysis:
         self.sentiment = SentimentAnalysis()
         self.symbol_finder = CryptoSymbolFinder()
 
+
 def main():
     test_text = "ALL OF IT"
     test_text2 = "I've got a good bag of ALL"
@@ -120,13 +128,14 @@ def main():
 
 def test():
     test_text = """
-                So to prevent QNT people from trading against him further, he reserves all the margin.
+                So to prevent $QNT people from trading against him further, he reserves all the margin.
 
                 ALL OF IT
 
-                You couldn't borrow any LTC on spot anywhere. 
-                Since futures prices are marked against an index of spot prices, it became tough to move prices BTC enough to hit his liquidation.
+                You couldn't borrow any $LTC on spot anywhere. 
+                Since futures prices are marked against an index of spot prices, it became tough to move prices $BTC enough to hit his liquidation.
                 """
+
     test_text2 = """
                 So to prevent people from trading against him further, he reserves all the margin.
 
@@ -136,9 +145,9 @@ def test():
                 Since futures prices are marked against an index of spot prices, it became tough to move prices enough to hit his liquidation.
                 """
     csf = CryptoSymbolFinder()
-    print(csf.find_crypto_symbol(input_text=test_text))
+    print(csf.find_crypto_symbols(input_text=test_text))
 
 
 if __name__ == '__main__':
-    main()
-    # test()
+    # main()
+    test()
