@@ -149,8 +149,10 @@ class DataBaseActions:
         if database_name is not None and database_name != self.__connection.active_database.name:
             self.set_active_database(database_name=database_name)
         
+
+        print(self.__connection.active_collection, type(self.__connection.active_collection))
         # Check active collection and set if needed
-        if collection_name is not None and collection_name != self.__connection.active_collection.name:
+        if collection_name is not None and collection_name != self.__connection.active_collection:
             self.set_active_collection(collection_name=collection_name)
         
         # Insert document into active collection
@@ -159,7 +161,12 @@ class DataBaseActions:
     """
     Create Replace Update Delete (CRUD) Methods
     """
-    
+    def __empty_collection(self, collection_name: str) -> None:
+        """Private method to empty a given collection from the cta_databse.
+        """
+        database = self.__connection["cta-database"]
+        database[collection_name].remove({})
+        print("Done my dude")
 
 def main():
     dba = DataBaseActions()
