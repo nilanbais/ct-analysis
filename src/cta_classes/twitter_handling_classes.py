@@ -8,7 +8,7 @@ and comments will refer to this account as the base_user.
 import json
 import dotenv
 
-from typing import Union
+from typing import Union, List
 from pprint import pprint
 from datetime import datetime, timedelta
 
@@ -87,7 +87,6 @@ class TwitterAPI(ApiAuthentication):
             user_id = self.__config['USER_ID']
 
         custom_header = self._extend_dict_object(base_dict={"User-Agent": "v2FollowingLookupPython"}, additional_values=addidional_header_vals)
-        print(custom_header)
 
         self.create_header(header_dict=custom_header)
         self.create_query_parameters(parameter_dict=self._extend_dict_object(base_dict={"user.fields": "public_metrics"}, 
@@ -192,6 +191,22 @@ class TwitterDataTransformer:
     def __init__(self) -> None:
         self.general = DataTransformer()
         self.sentiment = SentimentAnalysis()
+
+    @staticmethod
+    def clean_followers_list(input_list: List[dict]) -> List[dict]:
+        """Changes the dicts in the list of accounts followed by the base_user, to keep
+        the id, username, name, and followers_count.
+        """
+        result_list = list()
+        for item in input_list:
+            public_metrics = item["public_metrics"]
+            result_list.append({
+                "id": item["id"],
+                "username": item["username"],
+                "name": item["name"],
+                "followers_count": public_metrics["followers_count"]
+            })
+        return result_list
 
     def clean_get_tweets_response(self, input_data: list, additional_data: dict) -> list:
         """
