@@ -9,19 +9,24 @@ from pprint import pprint
 
 from cta_classes.pipeline_class import Pipeline
 from cta_classes.twitter_handling_classes import TwitterAPI, TwitterDataTransformer
+from cta_classes.database_handling_classes import DataBaseActions
 
-get_followed_acc_line = Pipeline()
+get_followed_acc_pipeline = Pipeline()
 
 twitter_api = TwitterAPI()
 twitter_data_transformer = TwitterDataTransformer()
 
-@get_followed_acc_line.task()
+@get_followed_acc_pipeline.task()
 def get_list():
     return twitter_api.extract_following_list()
 
-@get_followed_acc_line.task(depends_on=get_list)
+@get_followed_acc_pipeline.task(depends_on=get_list)
+def clean_list(input_list):
+    return twitter_data_transformer.clean_followers_list(input_list=input_list)
+
+@get_followed_acc_pipeline.task(depends_on=clean_list)
 def print_result(input_data):
     pprint(input_data)
 
 
-result = get_followed_acc_line.run() 
+result = get_followed_acc_pipeline.run() 
