@@ -162,13 +162,19 @@ class DataBaseActions:
     """
     Create Replace Update Delete (CRUD) Methods
     """
+    def delete_many_documents(self, collection_name: str, query: dict) -> None:
+        """Private method to delete the queried documents from the given collection.
+        """
+        database = self.__connection.client["cta-database"]
+        database[collection_name].delete_many(query)
+
     def _empty_collection(self, collection_name: str) -> None:
         """Private method to empty a given collection from the cta_databse.
         """
         user_input = input(f"{'-'*20}WARING{'-'*20}\nYou're about the empty the collection {collection_name}.\nDo you want to proceed? y/n\n")
         if user_input == 'y':
-            database = self.__connection.client["cta-database"]
-            database[collection_name].delete_many({})
+            self.delete_many_documents(collection_name=collection_name, 
+                                       query={})
             print("Done my dude")
         elif user_input == 'n':
             print("Nothing happend. No worries.")
