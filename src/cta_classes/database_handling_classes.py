@@ -15,6 +15,7 @@ by just giving it the piece of data that needs to be updated.
 [x] - write a class that is resposible for the transformation of the data in the database AND uses the class for the db connection.
 [] - use as many input variables as possible for the methods in the class. 
 """
+from tkinter import Y
 import dotenv
 import pymongo
 
@@ -161,17 +162,23 @@ class DataBaseActions:
     """
     Create Replace Update Delete (CRUD) Methods
     """
-    def __empty_collection(self, collection_name: str) -> None:
+    def _empty_collection(self, collection_name: str) -> None:
         """Private method to empty a given collection from the cta_databse.
         """
-        database = self.__connection["cta-database"]
-        database[collection_name].remove({})
-        print("Done my dude")
+        user_input = input(f"{'-'*20}WARING{'-'*20}\nYou're about the empty the collection {collection_name}.\nDo you want to proceed? y/n\n")
+        if user_input == 'y':
+            database = self.__connection.client["cta-database"]
+            database[collection_name].delete_many({})
+            print("Done my dude")
+        elif user_input == 'n':
+            print("Nothing happend. No worries.")
+        else:
+            print("I don't understand what you mean so I'm aborting the mission.")
 
 def main():
     dba = DataBaseActions()
     # dba.set_active_database(client=dba.client, database_name='x')
-    print(dba.get_active_database())
+    dba._empty_collection('users')
 
 def test():
     test_object_1 = {
