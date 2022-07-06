@@ -14,7 +14,7 @@ from datetime import datetime, timedelta
 
 from cta_classes.text_analyse_classes import SentimentAnalysis
 
-from cta_classes.base_classes.api_authentication_class import ApiAuthentication
+from cta_classes.base_classes.api_response_class import ApiAuthentication
 from cta_classes.base_classes.data_transformer_class import DataTransformer
 
 
