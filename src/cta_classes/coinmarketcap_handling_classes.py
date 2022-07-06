@@ -11,6 +11,7 @@ from pprint import pprint
 
 from cta_classes.base_classes.api_authentication_class import ApiAuthentication
 from cta_classes.base_classes.data_transformer_class import DataTransformer
+from cta_classes.base_classes.data_reader_writer import Reader
 
 class CoinMarketCapAPI(ApiAuthentication):
 
@@ -19,7 +20,7 @@ class CoinMarketCapAPI(ApiAuthentication):
         self.__config = dotenv.dotenv_values('./res/.env')
         self.__CMC_API_URL_MAP = self.__config["CMC_API_URL_MAP_FILE"]
 
-        self.API_URL_MAP = self.read_resource(file_name=self.__CMC_API_URL_MAP)
+        self.API_URL_MAP = Reader.read_resource(file_name=self.__CMC_API_URL_MAP)
 
         self.data_trandform = DataTransformer()  # bij CMCDataTransform of iets met deze dubbeling ??
 
@@ -37,19 +38,6 @@ class CoinMarketCapAPI(ApiAuthentication):
             raise Exception(
                 "The mode you selected werkt niet neef. Please see documentation for the available modes."
             )
-
-    """
-    Methods to manage reading and writing the data
-    """
-    def _read_json(self, file_name: str, folder_name: str) -> dict:
-        """
-        Base method (a method that will be extrended to specific use cases)
-        """
-        with open("./{}/{}".format(folder_name, file_name), 'r') as json_file:
-            return json.load(json_file)
-
-    def read_resource(self, file_name: str) -> dict:
-        return self._read_json(file_name=file_name, folder_name='res')
 
     """
     Methods to get a response from the API
