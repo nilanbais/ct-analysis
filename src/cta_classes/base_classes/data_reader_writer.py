@@ -2,12 +2,10 @@
 Classes dedicated to reading and writing data.
 """
 import json
+import dotenv
 
 class Reader():
 
-    """
-    Methods to manage reading and writing the data
-    """
     def _read_json(self, file_name: str, folder_name: str) -> dict:
         """
         Base method (a method that will be extrended to specific use cases)
@@ -19,3 +17,21 @@ class Reader():
         """Returns data from a file from the resource folder.
         """
         return self._read_json(file_name=file_name, folder_name='res')
+
+
+class EnvVarReader:
+    
+    def __init__(self) -> None:
+        self.__config = dotenv.dotenv_values('./res/.env')
+
+    def get_value(self, variable_name: str) -> str:
+        return self.__config[variable_name]
+
+
+class SecretVarReader:
+
+    def __init__(self) -> None:
+        self.__config = dotenv.dotenv_values('./res/authentication.env')
+
+    def get_value(self, variable_name: str) -> str:
+        return self.__config[variable_name]
