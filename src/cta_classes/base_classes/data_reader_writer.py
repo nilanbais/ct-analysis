@@ -2,7 +2,10 @@
 Classes dedicated to reading and writing data.
 """
 import json
+from typing import Protocol
 import dotenv
+
+
 
 class Reader():
 
@@ -18,6 +21,14 @@ class Reader():
         """
         return self._read_json(file_name=file_name, folder_name='res')
 
+
+class VarReaderProtocol(Protocol):
+
+    def __init__(self) -> None:
+        ...
+    
+    def get_value(self, variable_name: str) -> str:
+        ...
 
 class EnvVarReader:
     
