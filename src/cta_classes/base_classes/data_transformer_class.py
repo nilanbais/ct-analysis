@@ -33,3 +33,12 @@ class DataTransformer:
         the commas and letters
         """
         return ",".join(input_list) if len(input_list) > 0 else ""
+    
+    @staticmethod
+    def extend_dict_object(base_dict: dict, additional_values: dict) -> dict:
+        """Helper method to merge two dicts and return the result.
+        Returns: one large dict consisting of the two input dicts.        
+        """
+        fresh_dict = base_dict.copy()
+        fresh_dict.update(additional_values)
+        return fresh_dict

@@ -8,14 +8,14 @@ The code needs to do the following:
 from pprint import pprint
 
 from cta_classes.pipeline_class import Pipeline
-from cta_classes.twitter_handling_classes import TwitterAPI, TwitterDataTransformer
+from cta_classes.twitter_handling_classes import TwitterAPI, TwitterDataTransformer, TwitterAPI_v2
 from cta_classes.database_handling_classes import DataBaseActions
 
 get_followed_acc_pipeline = Pipeline()
 
 db_actions = DataBaseActions()
 
-twitter_api = TwitterAPI()
+twitter_api = TwitterAPI_v2()
 twitter_data_transformer = TwitterDataTransformer()
 
 
@@ -27,14 +27,14 @@ def get_list():
 def clean_list(input_list):
     return twitter_data_transformer.clean_followers_list(input_list=input_list)
 
-@get_followed_acc_pipeline.task(depends_on=clean_list)
+# @get_followed_acc_pipeline.task(depends_on=clean_list)
 def insert_documents_into_collection(input_list) -> None:
     db_actions.insert_many(documents=input_list,
                            database_name='cta-database',
                            collection_name='users')
     print("Done inserting my dude.")
 
-# @get_followed_acc_pipeline.task(depends_on=clean_list)
+@get_followed_acc_pipeline.task(depends_on=clean_list)
 def print_result(input_data):
     pprint(input_data)
 
