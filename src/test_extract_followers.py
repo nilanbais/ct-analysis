@@ -39,4 +39,4 @@ def print_result(input_data):
     pprint(input_data)
 
 
-result = get_followed_acc_pipeline.run() 
+result = get_followed_acc_pipeline.run()
