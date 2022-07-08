@@ -9,8 +9,47 @@ import json
 import dotenv
 from pprint import pprint
 
-from cta_classes.base_classes.api_authentication_class import ApiAuthentication
+from cta_classes.base_classes.api_response_class import ApiAuthentication, APICommunicator
 from cta_classes.base_classes.data_transformer_class import DataTransformer
+from cta_classes.base_classes.data_reader_writer import Reader, EnvVarReader
+
+
+class CoinMarketCapAPI_v2:
+
+    def __init__(self) -> None:
+        self.communicator = APICommunicator(auth_token_name='CMC_API_KEY')
+        self.API_URL_MAP = Reader.read_resource(file_name=EnvVarReader().get_value("CMC_API_URL_MAP_FILE"))
+
+    def get_url(self, endpoint: str) -> str:
+        mode_options = [key for key in self.API_URL_MAP.keys()]
+
+        if endpoint.lower() in mode_options:
+            self.communicator.url = next((url for key, url in self.API_URL_MAP.items() if key == endpoint))
+        else:
+            raise Exception(
+                "The endpoint you selected werkt niet neef. Please see documentation for the available points."
+            )
+    
+    def extract_coin_categories(self) -> dict:
+        """Returns the categories available on CoinMarketCap"""
+        url = self.get_url(endpoint='coin categories')
+
+        json_response = self.communicator.connect_to_endpoint(url=url)
+        return json_response['data']
+    
+    def get_symbol_id_list(self, specified_symbols: list = []) -> dict:
+        """Returns a list of coin ids. 
+            If a list given, it returns the is of the specified coins.
+            If no list given, the method will do a standard request.
+        """
+
+        prepped_parameter_dict = {"symbol": DataTransformer().list_to_string(input_list=specified_symbols)} if len(specified_symbols) > 0 else {}
+
+        self.get_url(endpoint='idmap')
+
+        json_response = self.communicator.connect_to_endpoint(url=self.url, params=prepped_parameter_dict)
+        return json_response['data']
+
 
 class CoinMarketCapAPI(ApiAuthentication):
 
@@ -19,7 +58,7 @@ class CoinMarketCapAPI(ApiAuthentication):
         self.__config = dotenv.dotenv_values('./res/.env')
         self.__CMC_API_URL_MAP = self.__config["CMC_API_URL_MAP_FILE"]
 
-        self.API_URL_MAP = self.read_resource(file_name=self.__CMC_API_URL_MAP)
+        self.API_URL_MAP = Reader.read_resource(file_name=self.__CMC_API_URL_MAP)
 
         self.data_trandform = DataTransformer()  # bij CMCDataTransform of iets met deze dubbeling ??
 
@@ -37,19 +76,6 @@ class CoinMarketCapAPI(ApiAuthentication):
             raise Exception(
                 "The mode you selected werkt niet neef. Please see documentation for the available modes."
             )
-
-    """
-    Methods to manage reading and writing the data
-    """
-    def _read_json(self, file_name: str, folder_name: str) -> dict:
-        """
-        Base method (a method that will be extrended to specific use cases)
-        """
-        with open("./{}/{}".format(folder_name, file_name), 'r') as json_file:
-            return json.load(json_file)
-
-    def read_resource(self, file_name: str) -> dict:
-        return self._read_json(file_name=file_name, folder_name='res')
 
     """
     Methods to get a response from the API
