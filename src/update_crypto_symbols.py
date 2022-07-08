@@ -9,11 +9,11 @@ import dotenv
 from typing import List
 
 from cta_classes.pipeline_class import Pipeline
-from cta_classes.coinmarketcap_handling_classes import CoinMarketCapAPI, CMCDataTransformer
+from cta_classes.coinmarketcap_handling_classes import CoinMarketCapAPI, CMCDataTransformer, CoinMarketCapAPI_v2
 
 update_crypto_symbols = Pipeline()
 
-cmc_api = CoinMarketCapAPI()
+cmc_api = CoinMarketCapAPI_v2()
 cmc_data_transformer = CMCDataTransformer()
 
 @update_crypto_symbols.task()

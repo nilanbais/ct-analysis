@@ -18,7 +18,7 @@ class CoinMarketCapAPI_v2:
 
     def __init__(self) -> None:
         self.communicator = APICommunicator(auth_token_name='CMC_API_KEY')
-        self.API_URL_MAP = Reader.read_resource(file_name=EnvVarReader().get_value("CMC_API_URL_MAP_FILE"))
+        self.API_URL_MAP = Reader().read_resource(file_name=EnvVarReader().get_value("CMC_API_URL_MAP_FILE"))
 
     def get_url(self, endpoint: str) -> str:
         mode_options = [key for key in self.API_URL_MAP.keys()]
@@ -47,9 +47,8 @@ class CoinMarketCapAPI_v2:
 
         self.get_url(endpoint='idmap')
 
-        json_response = self.communicator.connect_to_endpoint(url=self.url, params=prepped_parameter_dict)
-        return json_response['data']
-
+        json_response = self.communicator.connect_to_endpoint(url=self.communicator.url, query_parameters=prepped_parameter_dict)
+        return json_response["data"]
 
 class CoinMarketCapAPI(ApiAuthentication):
 

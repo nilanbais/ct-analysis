@@ -16,48 +16,56 @@ import requests
 class GetAuth(ABC):
 
     @abstractmethod
-    def get_auth(self, header) -> dict:
+    def get_authed_header(self, header) -> dict:
         """Method to return an authenticated header"""
 
 
 class BearerOAuth(GetAuth):
 
-    def get_authed_header(self, header) -> dict:
+    def __init__(self, authentication_token_name) -> None:
+        self.authentication_token_name = authentication_token_name
+
+    def get_authed_header(self, header: dict) -> dict:
         """Returns a header with the correct authentication bearer token."""
         header_oath = header.copy()  # Copy to make sure the token isn't added to the header attribute
-        header_oath["Authorization"] = "Bearer {}".format(self.__config[self.authentication_token_name])
+        header_oath["Authorization"] = "Bearer {}".format(SecretVarReader().get_value(variable_name=self.authentication_token_name))
         return header_oath
 
 
 class ApiKeyAuth(GetAuth):
 
-    def get_authed_header(self, header) -> dict:
+    def __init__(self, authentication_token_name) -> None:
+        self.authentication_token_name = authentication_token_name
+
+    def get_authed_header(self, header: dict) -> dict:
         """Returns a header with the correct authentication key, val pair."""
         header_auth = header.copy()
-        header_auth["X-CMC_PRO_API_KEY"] = self.__config[self.authentication_token_name]
+        header_auth["X-CMC_PRO_API_KEY"] = SecretVarReader().get_value(variable_name=self.authentication_token_name)
         return header_auth
 
 
 class AuthObject:
 
-    def __init__(self, auth_token_name: str) -> Union[BearerOAuth, ApiKeyAuth]:
-        return self.get_auth_object(auth_token_name)
+    def __init__(self, auth_token_name: str) -> None:
+        self.auth_object = self.__set_auth_object(auth_token_name)
     
-    def get_auth_object(auth_token_name: str) -> Union[BearerOAuth, ApiKeyAuth]:
+    @staticmethod
+    def __set_auth_object(auth_token_name: str) -> Union[BearerOAuth, ApiKeyAuth]:
         """Method to retrun a correct authentication object.
         """
-        if len(auth_token_name <= 100):
-            return ApiKeyAuth()
-        elif len(auth_token_name > 100):
-            return BearerOAuth()
+        __auth_token = SecretVarReader().get_value(auth_token_name)
+
+        if len(__auth_token) <= 100:
+            return ApiKeyAuth(auth_token_name)
+        elif len(__auth_token) > 100:
+            return BearerOAuth(auth_token_name)
 
 
 class Authenticator:
 
     def __init__(self, auth_token_name: str) -> None:
-        self.auth_token = SecretVarReader().get_value(auth_token_name) 
-        self._auth_obj = AuthObject(self.auth_token)
-        self.header = self.get_atheredised_header()
+        self._auth_obj = AuthObject(auth_token_name).auth_object
+        # self.header = self.get_atheredised_header()
 
     def get_atheredised_header(self, header: str) -> dict:
         """Method to auterise the header.
@@ -71,21 +79,22 @@ class APICommunicator:
 
     def __init__(self, auth_token_name: str) -> None:
         self.__auth_object = Authenticator(auth_token_name)
+        self.__authed_header = None
         self.header = None
         self.url = None
         self.query_parameters = None
         
         
-    def conect_to_endpoint(self, header: dict = {}, url: str = "", query_parameters: dict = {}):
+    def connect_to_endpoint(self, header: dict = {}, url: str = "", query_parameters: dict = {}):
         """Returns the response of the API call."""
         self.set_header(header)
         self.set_query_parameters(query_parameters)
         self.set_url(url)
 
         self.validate_request()
-        response = requests.request("GET", self.url, headers=self.__auth_object(self.header), params=self.query_parameters)
+        response = requests.request("GET", self.url, headers=self.__authed_header, params=self.query_parameters)
         self.check_response_status(response)
-        return response
+        return response.json()
 
 
     def validate_request(self):
@@ -103,7 +112,7 @@ class APICommunicator:
                 "No parameter object created."
             )
 
-    def check_response_status(self, response) -> Optional(ValueError):
+    def check_response_status(self, response) -> Optional[ValueError]:
         """
         check the response code
         """
@@ -117,8 +126,12 @@ class APICommunicator:
     """
     Methods to override attributes in ApiAthentication
     """
+    def __set_authed_header(self) -> None:
+        self.__authed_header = self.__auth_object.get_atheredised_header(self.header)
+
     def set_header(self, header_dict) -> None: 
         self.header = header_dict.copy()
+        self.__set_authed_header()
     
     def set_query_parameters(self, parameter_dict) -> None:
         self.query_parameters = parameter_dict.copy()
