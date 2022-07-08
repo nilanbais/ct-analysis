@@ -13,7 +13,7 @@ from cta_classes.database_handling_classes import DataBaseActions
 
 get_followed_acc_pipeline = Pipeline()
 
-# db_actions = DataBaseActions()
+db_actions = DataBaseActions()
 
 twitter_api = TwitterAPI_v2()
 twitter_data_transformer = TwitterDataTransformer()
