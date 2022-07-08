@@ -45,10 +45,12 @@ class CoinMarketCapAPI_v2:
 
         prepped_parameter_dict = {"symbol": DataTransformer().list_to_string(input_list=specified_symbols)} if len(specified_symbols) > 0 else {}
 
-        self.get_url(endpoint='idmap')
+        url = self.get_url(endpoint='idmap')
 
-        json_response = self.communicator.connect_to_endpoint(url=self.communicator.url, query_parameters=prepped_parameter_dict)
+        json_response = self.communicator.connect_to_endpoint(url=url, query_parameters=prepped_parameter_dict)
         return json_response["data"]
+
+
 
 class CoinMarketCapAPI(ApiAuthentication):
 
