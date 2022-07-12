@@ -7,7 +7,7 @@ The code needs to do the following:
 """
 from pprint import pprint
 
-from cta_classes.pipeline_class import Pipeline
+from cta_classes.pipeline import Pipeline
 from cta_classes.twitter_handling_classes import TwitterAPI, TwitterDataTransformer, TwitterAPI_v2
 from cta_classes.database_handling_classes import DataBaseActions
 

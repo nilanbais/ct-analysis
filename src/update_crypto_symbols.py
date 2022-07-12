@@ -8,7 +8,7 @@ import dotenv
 
 from typing import List
 
-from cta_classes.pipeline_class import Pipeline
+from cta_classes.pipeline import Pipeline
 from cta_classes.coinmarketcap_handling_classes import CoinMarketCapAPI, CMCDataTransformer, CoinMarketCapAPI_v2
 
 update_crypto_symbols = Pipeline()
